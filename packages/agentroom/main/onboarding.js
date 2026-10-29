@@ -15,8 +15,20 @@ const os = require('node:os');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
 const { spawn, spawnSync } = require('node:child_process');
-const { writeHermesConfig } = require('../agent/config/hermes.js');
-const { writeDshConfig, detectDsh } = require('../agent/config/dsh.js');
+// 打包后 main/ 在 app.asar 内，而 agent/ 在 app.asar.unpacked：不能用相对
+// require，必须按运行时传入的 agentRoot 绝对路径加载。
+let configCache = null;
+function config(agentRoot) {
+  if (!configCache || configCache.root !== agentRoot) {
+    const dir = path.join(agentRoot, 'agent', 'config');
+    configCache = {
+      root: agentRoot,
+      hermes: require(path.join(dir, 'hermes.js')),
+      dsh: require(path.join(dir, 'dsh.js'))
+    };
+  }
+  return configCache;
+}
 
 let BrowserWindow = null;
 try { BrowserWindow = require('electron').BrowserWindow || null; } catch { /* 非 Electron 环境 */ }
@@ -265,7 +277,7 @@ function registerOnboarding({ ipcMain, app, shell, paths } = {}) {
   }
 
   function onState() {
-    const dsh = detectDsh(P.dshHome);
+    const dsh = config(P.agentRoot).dsh.detectDsh(P.dshHome);
     return {
       ok: true,
       python: { path: P.pythonPath, found: pythonFound(P.pythonPath) },
@@ -304,15 +316,18 @@ function registerOnboarding({ ipcMain, app, shell, paths } = {}) {
       }
       profile = payload.profile;
     }
+    let cfg;
+    try { cfg = config(P.agentRoot); }
+    catch (e) { return { ok: false, error: '加载配置模块失败: ' + errText(e) }; }
     const result = { ok: true, agents: {} };
     for (const agent of agents) {
       const item = { config: null, skill: null, error: null };
       try {
         if (agent === 'hermes') {
-          item.config = writeHermesConfig({ home: P.hermesHome, pythonPath: P.pythonPath, launchPath: P.launchPath, connectionFile: P.connectionFile });
+          item.config = cfg.hermes.writeHermesConfig({ home: P.hermesHome, pythonPath: P.pythonPath, launchPath: P.launchPath, connectionFile: P.connectionFile });
           item.skill = runSkillInstall('hermes', P.hermesHome);
         } else {
-          item.config = writeDshConfig({ dshHome: P.dshHome, profile, pythonPath: P.pythonPath, launchPath: P.launchPath, connectionFile: P.connectionFile });
+          item.config = cfg.dsh.writeDshConfig({ dshHome: P.dshHome, profile, pythonPath: P.pythonPath, launchPath: P.launchPath, connectionFile: P.connectionFile });
           item.skill = runSkillInstall('dsh', P.dshHome);
         }
       } catch (e) { item.error = errText(e); }
