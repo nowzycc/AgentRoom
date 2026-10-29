@@ -1,5 +1,7 @@
 # AgentRoom
 
+[![CI](https://github.com/nowzycc/AgentRoom/actions/workflows/ci.yml/badge.svg)](https://github.com/nowzycc/AgentRoom/actions/workflows/ci.yml)
+
 AgentRoom is an agent-driven 3D room: a browser-rendered NPC scene with a
 single-authority runtime, an HTTP/WebSocket broker, an MCP server, and an
 Electron desktop shell.
@@ -7,6 +9,22 @@ Electron desktop shell.
 The project explores a narrow question: **can an AI coding agent inhabit a
 persistent 3D space and act through an explicit, auditable contract instead of
 pretending to act?**
+
+## Development
+
+CI runs on every push and pull request (`.github/workflows/ci.yml`), on both
+`ubuntu-latest` and `windows-latest`, with Python 3.11 and Node 22:
+
+- MCP launcher tests — `python -m pytest packages/agentroom/agent/mcp/tests`
+- Skill installer tests — `python -m pytest packages/agentroom/agent/install/tests`
+- Hermes / DSH config-writer tests — `node packages/agentroom/tests/onboarding/test_config.js`
+- Python `compileall` and `node --check` syntax gates
+
+Release (`.github/workflows/release.yml`) runs on `v*` tags and publishes a
+source archive plus SHA256 checksums. **Binary packages are not built in CI**:
+the repository is code-only, and the Windows portable ZIP needs 3D assets and
+vendored Electron/Python runtimes that are not redistributable here. Build it
+locally with `packages/agentroom/scripts/build-windows.py`.
 
 Status: **private-preview quality**. Explicit command execution is implemented
 and tested. Automatic observation of agent lifecycle events is not included in

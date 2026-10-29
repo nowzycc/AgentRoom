@@ -1,0 +1,48 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release (e.g. v0.1.0)'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  source-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve tag
+        id: tag
+        run: |
+          TAG="${{ inputs.tag || github.ref_name }}"
+          echo "name=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Build source archive + checksums
+        run: |
+          TAG="${{ steps.tag.outputs.name }}"
+          git archive --format=zip --prefix="AgentRoom-${TAG}/" -o "AgentRoom-${TAG}-source.zip" "$TAG"
+          sha256sum "AgentRoom-${TAG}-source.zip" > "AgentRoom-${TAG}-SHA256SUMS.txt"
+          cat "AgentRoom-${TAG}-SHA256SUMS.txt"
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.name }}
+          name: AgentRoom ${{ steps.tag.outputs.name }}
+          generate_release_notes: true
+          files: |
+            AgentRoom-${{ steps.tag.outputs.name }}-source.zip
+            AgentRoom-${{ steps.tag.outputs.name }}-SHA256SUMS.txt
+          body: |
+            代码以 MIT 协议发布；3D 资产不随仓库或本压缩包分发，见 `ASSETS.md`。
+            Windows 便携包需在本地用 `packages/agentroom/scripts/build-windows.py`
+            自行构建（构建所需资产与 Electron/Python 运行时不在仓库内）。
