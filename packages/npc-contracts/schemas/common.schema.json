@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://npc.local/schemas/v1/common.schema.json",
+  "title": "NPC runtime v1 common definitions",
+  "$defs": {
+    "specVersion": {
+      "const": "1.0"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$"
+    },
+    "source": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{1,31}:[A-Za-z0-9._-]{1,64}$"
+    },
+    "vector3": {
+      "type": "array",
+      "items": { "type": "number" },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "z": { "type": "number" }
+      }
+    },
+    "yawDeg": {
+      "type": "number",
+      "minimum": -360,
+      "maximum": 360
+    },
+    "localTransform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["position", "yawDeg"],
+      "properties": {
+        "position": { "$ref": "#/$defs/vector3" },
+        "yawDeg": { "$ref": "#/$defs/yawDeg" }
+      }
+    },
+    "contactPoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["point", "toleranceMeters"],
+      "properties": {
+        "point": { "$ref": "#/$defs/point" },
+        "toleranceMeters": { "type": "number", "exclusiveMinimum": 0, "maximum": 0.2 }
+      }
+    }
+  }
+}

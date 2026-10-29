@@ -1,0 +1,11 @@
+{
+  "apiVersion": "h5a.1",
+  "scope": {
+    "worldId": "room",
+    "actorId": "npc-a",
+    "authorityEpoch": "authority-boot1-1"
+  },
+  "type": "report_ack",
+  "reportId": "report-1",
+  "cursor": "broker-boot1/10"
+}

@@ -1,0 +1,14 @@
+{
+  "apiVersion": "h5a.1",
+  "scope": {
+    "worldId": "room",
+    "actorId": "npc-a",
+    "authorityEpoch": "authority-boot1-1"
+  },
+  "commandId": "cmd-goal-1",
+  "kind": "goal",
+  "status": "maintaining",
+  "goalStatus": "maintaining",
+  "reason": "CURRENT_GOAL_SATISFIED",
+  "attempts": []
+}

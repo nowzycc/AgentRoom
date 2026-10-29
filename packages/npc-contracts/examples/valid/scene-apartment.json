@@ -1,0 +1,272 @@
+{
+  "specVersion": "1.0",
+  "sceneId": "apartment-v3",
+  "revision": 3,
+  "units": "meters",
+  "upAxis": "Y",
+  "asset": {
+    "uri": "assets/apartment.glb",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "interactions": [
+    {
+      "id": "desk-workstation",
+      "revision": 2,
+      "hostNode": "Desk_Work",
+      "kind": "workstation",
+      "slots": [
+        {
+          "id": "desk-stand",
+          "pose": "standing",
+          "localTransform": {
+            "position": [
+              0,
+              0,
+              0.35
+            ],
+            "yawDeg": 180
+          },
+          "facing": {
+            "yawDeg": 180,
+            "toleranceDeg": 8
+          },
+          "approach": {
+            "position": [
+              0,
+              0,
+              0.9
+            ],
+            "radiusMeters": 0.55
+          },
+          "capacity": 1,
+          "capabilities": [
+            "work",
+            "think",
+            "type"
+          ],
+          "compatibleBodyProfiles": [
+            "body-companion",
+            "body-visitor"
+          ]
+        }
+      ],
+      "composedOf": [
+        {
+          "interactionId": "chair-main",
+          "role": "seat"
+        },
+        {
+          "interactionId": "keyboard-main",
+          "role": "keyboard"
+        }
+      ]
+    },
+    {
+      "id": "chair-main",
+      "revision": 2,
+      "hostNode": "Chair_Main",
+      "kind": "seat",
+      "slots": [
+        {
+          "id": "seat",
+          "pose": "sitting",
+          "localTransform": {
+            "position": [
+              0,
+              0.45,
+              0
+            ],
+            "yawDeg": 0
+          },
+          "facing": {
+            "yawDeg": 0,
+            "toleranceDeg": 8
+          },
+          "approach": {
+            "position": [
+              0,
+              0,
+              0.85
+            ],
+            "radiusMeters": 0.55
+          },
+          "capacity": 1,
+          "capabilities": [
+            "sit",
+            "work",
+            "think"
+          ],
+          "compatibleBodyProfiles": [
+            "body-companion",
+            "body-visitor"
+          ],
+          "exit": {
+            "position": [
+              0,
+              0,
+              1.05
+            ],
+            "radiusMeters": 0.6
+          },
+          "contacts": {
+            "seat": {
+              "point": {
+                "x": 0,
+                "y": 0.45,
+                "z": 0
+              },
+              "toleranceMeters": 0.03
+            },
+            "feet": [
+              {
+                "point": {
+                  "x": -0.12,
+                  "y": 0.0,
+                  "z": 0.42
+                },
+                "toleranceMeters": 0.02
+              },
+              {
+                "point": {
+                  "x": 0.12,
+                  "y": 0.0,
+                  "z": 0.42
+                },
+                "toleranceMeters": 0.02
+              }
+            ]
+          }
+        }
+      ],
+      "enabled": true
+    },
+    {
+      "id": "keyboard-main",
+      "revision": 1,
+      "hostNode": "Desk_Keyboard",
+      "kind": "keyboard",
+      "slots": [
+        {
+          "id": "keys",
+          "pose": "sitting",
+          "localTransform": {
+            "position": [
+              0,
+              0.74,
+              0.52
+            ],
+            "yawDeg": 0
+          },
+          "facing": {
+            "yawDeg": 0,
+            "toleranceDeg": 8
+          },
+          "approach": {
+            "position": [
+              0,
+              0,
+              0.85
+            ],
+            "radiusMeters": 0.55
+          },
+          "capacity": 1,
+          "capabilities": [
+            "type"
+          ],
+          "compatibleBodyProfiles": [
+            "body-companion",
+            "body-visitor"
+          ],
+          "contacts": {
+            "hands": [
+              {
+                "point": {
+                  "x": -0.17,
+                  "y": 0.76,
+                  "z": 0.64
+                },
+                "toleranceMeters": 0.03
+              },
+              {
+                "point": {
+                  "x": 0.17,
+                  "y": 0.76,
+                  "z": 0.64
+                },
+                "toleranceMeters": 0.03
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "bed-main",
+      "revision": 1,
+      "hostNode": "Bed_Main",
+      "kind": "bed",
+      "slots": [
+        {
+          "id": "lying",
+          "pose": "lying",
+          "localTransform": {
+            "position": [
+              0,
+              0.55,
+              0
+            ],
+            "yawDeg": 90
+          },
+          "facing": {
+            "yawDeg": 180,
+            "toleranceDeg": 8
+          },
+          "approach": {
+            "position": [
+              0,
+              0,
+              0.9
+            ],
+            "radiusMeters": 0.55
+          },
+          "capacity": 1,
+          "capabilities": [
+            "rest",
+            "sleep"
+          ],
+          "compatibleBodyProfiles": [
+            "body-companion",
+            "body-visitor"
+          ],
+          "exit": {
+            "position": [
+              1.1,
+              0,
+              0
+            ],
+            "radiusMeters": 0.7
+          }
+        }
+      ]
+    }
+  ],
+  "spawnPoints": [
+    {
+      "id": "spawn-home",
+      "position": [
+        2.2,
+        0,
+        2.4
+      ],
+      "yawDeg": 200
+    }
+  ],
+  "autonomy": {
+    "enabledGoals": [
+      "idle",
+      "lookAround"
+    ],
+    "allowSleep": false,
+    "idleCooldownMs": 30000
+  }
+}

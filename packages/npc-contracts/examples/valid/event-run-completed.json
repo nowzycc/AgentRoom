@@ -1,0 +1,15 @@
+{
+  "specVersion": "1.0",
+  "eventId": "evt-run-done-001",
+  "source": "hermes:default",
+  "sourceEpoch": "boot-a",
+  "sequence": 44,
+  "worldId": "apartment",
+  "actorId": "companion",
+  "runId": "run-a",
+  "type": "run.completed",
+  "occurredAt": "2026-10-25T02:01:00+08:00",
+  "data": {
+    "outcome": "success"
+  }
+}

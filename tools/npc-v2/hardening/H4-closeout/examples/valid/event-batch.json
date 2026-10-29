@@ -1,0 +1,57 @@
+{
+  "apiVersion": "h5a.1",
+  "scope": {
+    "worldId": "room",
+    "actorId": "npc-a",
+    "authorityEpoch": "authority-boot1-1"
+  },
+  "batchId": "batch-1",
+  "events": [
+    {
+      "specVersion": "1.0",
+      "worldId": "room",
+      "actorId": "harness-observation",
+      "source": "fake:h5a",
+      "sourceEpoch": "source-boot1",
+      "sessionId": "session-1",
+      "occurredAt": "2026-10-28T09:40:00Z",
+      "eventId": "e-1",
+      "sequence": 1,
+      "type": "presence.heartbeat",
+      "data": {
+        "status": "alive"
+      }
+    },
+    {
+      "specVersion": "1.0",
+      "worldId": "room",
+      "actorId": "harness-observation",
+      "source": "fake:h5a",
+      "sourceEpoch": "source-boot1",
+      "sessionId": "session-1",
+      "occurredAt": "2026-10-28T09:40:00Z",
+      "eventId": "e-2",
+      "sequence": 2,
+      "type": "run.started",
+      "runId": "run-1",
+      "data": {}
+    },
+    {
+      "specVersion": "1.0",
+      "worldId": "room",
+      "actorId": "harness-observation",
+      "source": "fake:h5a",
+      "sourceEpoch": "source-boot1",
+      "sessionId": "session-1",
+      "occurredAt": "2026-10-28T09:40:00Z",
+      "eventId": "e-3",
+      "sequence": 3,
+      "type": "tool.started",
+      "runId": "run-1",
+      "data": {
+        "toolCallId": "tool-1",
+        "activityClass": "coding"
+      }
+    }
+  ]
+}

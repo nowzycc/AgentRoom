@@ -1,0 +1,20 @@
+{
+  "specVersion": "1.0",
+  "bodyProfileId": "body-visitor",
+  "heightMeters": 1.8,
+  "radiusMeters": 0.31,
+  "eyeHeightMeters": 1.7,
+  "hipHeightMeters": 0.99,
+  "reach": {
+    "maxArmMeters": 0.78,
+    "comfortableArmMeters": 0.66
+  },
+  "bones": {
+    "head": "mixamorigHead",
+    "hips": "mixamorigHips",
+    "leftHand": "mixamorigLeftHand",
+    "rightHand": "mixamorigRightHand",
+    "leftFoot": "mixamorigLeftFoot",
+    "rightFoot": "mixamorigRightFoot"
+  }
+}

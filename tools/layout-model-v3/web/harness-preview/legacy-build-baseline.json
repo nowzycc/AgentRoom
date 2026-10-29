@@ -1,0 +1,18 @@
+[
+  {
+    "path": "tools/layout-model-v3/web/npc-movable-seat.html",
+    "sha256": "706ca2aa227036aa620cef9b2aa320fa10392b183290fc533136a0925de3f184"
+  },
+  {
+    "path": "tools/layout-model-v3/web/movable-seat/app/app.js",
+    "sha256": "0b26c2a571353232645c6cb8b21511b17fb56b604114f7382c4cb55be5ad00a7"
+  },
+  {
+    "path": "tools/layout-model-v3/web/npc/npc-movable-seat-core.js",
+    "sha256": "969d32426506307921fd5bc4e2bebe56017fb2b545a34d5ab0850d63ef713a63"
+  },
+  {
+    "path": "tools/layout-model-v3/web/npc/npc-v2-worker.js",
+    "sha256": "6e1b6932b497ca9342c46f24d677ad11b793d172524e280b750b6a02ea2fd62a"
+  }
+]

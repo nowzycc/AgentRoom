@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://npc.local/schemas/v1/command.schema.json",
+  "title": "NPC runtime v1 command",
+  "description": "An intent submitted by an authorised client. accepted only means persisted; runtime confirmation is required for terminal success.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "specVersion",
+    "commandId",
+    "worldId",
+    "actorId",
+    "type",
+    "priorityClass"
+  ],
+  "properties": {
+    "specVersion": {
+      "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/specVersion"
+    },
+    "commandId": {
+      "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id"
+    },
+    "worldId": {
+      "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id"
+    },
+    "actorId": {
+      "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id"
+    },
+    "type": {
+      "enum": [
+        "goal.request",
+        "goal.cancel",
+        "manual.acquire",
+        "manual.release",
+        "world.pause",
+        "world.resume"
+      ]
+    },
+    "goal": {
+      "enum": [
+        "work",
+        "think",
+        "converse",
+        "rest",
+        "idle",
+        "lookAround"
+      ]
+    },
+    "targetCommandId": {
+      "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id"
+    },
+    "priorityClass": {
+      "enum": [
+        "safety",
+        "manual",
+        "task",
+        "autonomy"
+      ]
+    },
+    "ttlMs": {
+      "type": "integer",
+      "minimum": 1000,
+      "maximum": 3600000
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "capability": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9._-]{0,63}$"
+        },
+        "interactionId": {
+          "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id"
+        }
+      }
+    },
+    "onConflict": {
+      "enum": [
+        "queue",
+        "reject",
+        "replace"
+      ]
+    },
+    "correlationId": {
+      "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id"
+    },
+    "issuedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 280
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "goal.request"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "required": [
+          "goal",
+          "ttlMs"
+        ],
+        "properties": {
+          "goal": {
+            "enum": [
+              "work",
+              "think",
+              "converse",
+              "rest",
+              "idle",
+              "lookAround"
+            ]
+          },
+          "ttlMs": {
+            "type": "integer",
+            "minimum": 1000,
+            "maximum": 3600000
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "goal.cancel"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "required": [
+          "targetCommandId",
+          "ttlMs"
+        ],
+        "properties": {
+          "targetCommandId": {
+            "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id"
+          },
+          "ttlMs": {
+            "type": "integer",
+            "minimum": 1000,
+            "maximum": 3600000
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "manual.acquire"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "required": [
+          "ttlMs"
+        ],
+        "properties": {
+          "ttlMs": {
+            "type": "integer",
+            "minimum": 1000,
+            "maximum": 3600000
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "manual.release"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "required": [
+          "targetCommandId"
+        ],
+        "properties": {
+          "targetCommandId": {
+            "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "world.pause"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "required": [
+          "reason"
+        ],
+        "properties": {
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 280
+          }
+        }
+      }
+    }
+  ]
+}

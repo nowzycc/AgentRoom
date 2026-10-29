@@ -1,0 +1,94 @@
+{
+  "specVersion": "1.0",
+  "worldId": "apartment",
+  "sceneId": "apartment-v3",
+  "sceneRevision": 3,
+  "authority": {
+    "mode": "none"
+  },
+  "goals": [
+    {
+      "id": "work",
+      "available": true
+    },
+    {
+      "id": "think",
+      "available": true
+    },
+    {
+      "id": "converse",
+      "available": true
+    },
+    {
+      "id": "rest",
+      "available": true
+    },
+    {
+      "id": "idle",
+      "available": true
+    },
+    {
+      "id": "lookAround",
+      "available": true
+    },
+    {
+      "id": "sleep",
+      "available": false,
+      "reason": "no sleep clip/resource in v1"
+    }
+  ],
+  "actions": [
+    {
+      "id": "walk",
+      "available": true
+    },
+    {
+      "id": "align",
+      "available": true
+    },
+    {
+      "id": "sit",
+      "available": true
+    },
+    {
+      "id": "stand",
+      "available": true
+    },
+    {
+      "id": "type",
+      "available": true
+    },
+    {
+      "id": "talk",
+      "available": true
+    }
+  ],
+  "interactions": [
+    {
+      "id": "desk-workstation",
+      "available": true
+    },
+    {
+      "id": "chair-main",
+      "available": true
+    },
+    {
+      "id": "keyboard-main",
+      "available": true
+    },
+    {
+      "id": "bed-main",
+      "available": false,
+      "reason": "rest only; sleep disabled"
+    }
+  ],
+  "features": {
+    "sleep": false,
+    "manualOverride": true,
+    "maxActors": 2
+  },
+  "limits": {
+    "maxEventPayloadBytes": 65536,
+    "commandsPerMinute": 60
+  }
+}

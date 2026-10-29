@@ -1,0 +1,103 @@
+{
+  "specVersion": "1.0",
+  "sceneId": "dup-scene",
+  "revision": 1,
+  "units": "meters",
+  "upAxis": "Y",
+  "asset": {
+    "uri": "assets/dup.glb"
+  },
+  "interactions": [
+    {
+      "id": "chair-main",
+      "revision": 1,
+      "hostNode": "Chair_A",
+      "kind": "seat",
+      "slots": [
+        {
+          "id": "seat",
+          "pose": "sitting",
+          "localTransform": {
+            "position": [
+              0,
+              0.45,
+              0
+            ],
+            "yawDeg": 0
+          },
+          "facing": {
+            "yawDeg": 0,
+            "toleranceDeg": 8
+          },
+          "approach": {
+            "position": [
+              0,
+              0,
+              0.8
+            ],
+            "radiusMeters": 0.55
+          },
+          "capacity": 1,
+          "capabilities": [
+            "sit"
+          ],
+          "compatibleBodyProfiles": [
+            "body-companion",
+            "body-visitor"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "chair-main",
+      "revision": 1,
+      "hostNode": "Chair_B",
+      "kind": "seat",
+      "slots": [
+        {
+          "id": "seat",
+          "pose": "sitting",
+          "localTransform": {
+            "position": [
+              0,
+              0.45,
+              0
+            ],
+            "yawDeg": 0
+          },
+          "facing": {
+            "yawDeg": 0,
+            "toleranceDeg": 8
+          },
+          "approach": {
+            "position": [
+              0,
+              0,
+              0.8
+            ],
+            "radiusMeters": 0.55
+          },
+          "capacity": 1,
+          "capabilities": [
+            "sit"
+          ],
+          "compatibleBodyProfiles": [
+            "body-companion",
+            "body-visitor"
+          ]
+        }
+      ]
+    }
+  ],
+  "spawnPoints": [
+    {
+      "id": "spawn",
+      "position": [
+        0,
+        0,
+        1
+      ],
+      "yawDeg": 180
+    }
+  ]
+}

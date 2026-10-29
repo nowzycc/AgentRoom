@@ -1,0 +1,28 @@
+{
+  "apiVersion": "h5a.1",
+  "scope": {
+    "worldId": "room",
+    "actorId": "npc-a",
+    "authorityEpoch": "authority-boot1-1"
+  },
+  "available": true,
+  "singleActions": [
+    {
+      "actionKey": "lookAround",
+      "posture": "standing",
+      "candidate": null,
+      "resourceDependencies": [],
+      "versionDependencies": [],
+      "channels": [
+        "gaze"
+      ]
+    }
+  ],
+  "goals": [
+    "converse",
+    "lookAround",
+    "idle"
+  ],
+  "singleLedgerCapacity": 256,
+  "persistence": "memory-only"
+}

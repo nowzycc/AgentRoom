@@ -1,0 +1,6 @@
+{
+ "source":"fake:h4a","sessionId":"session-h4a","observerId":"harness-observation","actorId":"npc-a",
+ "heartbeatStaleAfterMs":8000,"failureVisibleForMs":3000,"goalTtlMs":600000,"manualTtlMs":30000,
+ "standingPlaceholder":{"originalGoal":"work","reason":"UNSUPPORTED_DEFERRED_SEATING: SEAT_ENTRY_UNREACHABLE:furniture_desk/desk_top; 家具坐姿延期，converse仅临时站姿转向，不是工作或打字"},
+ "goals":{"unknown":null,"disconnected":null,"working":"converse","waiting":"lookAround","idle":"idle","error":"idle"}
+}

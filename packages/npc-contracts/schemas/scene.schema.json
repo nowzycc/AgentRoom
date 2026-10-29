@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://npc.local/schemas/v1/scene.schema.json",
+  "title": "NPC runtime v1 scene manifest",
+  "description": "Scene geometry and interaction resources only. Behaviour code, bone names and prompt text are not valid here.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["specVersion", "sceneId", "revision", "units", "upAxis", "asset", "interactions", "spawnPoints"],
+  "properties": {
+    "specVersion": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/specVersion" },
+    "sceneId": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id" },
+    "revision": { "type": "integer", "minimum": 1 },
+    "units": { "const": "meters" },
+    "upAxis": { "const": "Y" },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uri"],
+      "properties": {
+        "uri": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "interactions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/interaction" },
+      "minItems": 1,
+      "maxItems": 256
+    },
+    "spawnPoints": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/spawnPoint" },
+      "minItems": 1,
+      "maxItems": 32
+    },
+    "autonomy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabledGoals": {
+          "type": "array",
+          "items": { "enum": ["idle", "lookAround", "rest"] },
+          "uniqueItems": true,
+          "maxItems": 3
+        },
+        "allowSleep": { "type": "boolean" },
+        "idleCooldownMs": { "type": "integer", "minimum": 0, "maximum": 600000 }
+      }
+    }
+  },
+  "$defs": {
+    "slot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "pose",
+        "localTransform",
+        "facing",
+        "approach",
+        "capacity",
+        "capabilities",
+        "compatibleBodyProfiles"
+      ],
+      "properties": {
+        "id": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id" },
+        "pose": { "enum": ["standing", "sitting", "lying"] },
+        "localTransform": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/localTransform" },
+        "facing": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["yawDeg"],
+          "properties": {
+            "yawDeg": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/yawDeg" },
+            "toleranceDeg": { "type": "number", "exclusiveMinimum": 0, "maximum": 180 }
+          }
+        },
+        "approach": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["position", "radiusMeters"],
+          "properties": {
+            "position": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/vector3" },
+            "radiusMeters": { "type": "number", "minimum": 0.2, "maximum": 2 }
+          }
+        },
+        "exit": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["position", "radiusMeters"],
+          "properties": {
+            "position": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/vector3" },
+            "radiusMeters": { "type": "number", "minimum": 0.2, "maximum": 2 }
+          }
+        },
+        "contacts": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "seat": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/contactPoint" },
+            "feet": {
+              "type": "array",
+              "items": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/contactPoint" },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "hands": {
+              "type": "array",
+              "items": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/contactPoint" },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          }
+        },
+        "capacity": { "type": "integer", "minimum": 1, "maximum": 1 },
+        "capabilities": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9._-]{0,63}$" },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "compatibleBodyProfiles": {
+          "type": "array",
+          "items": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id" },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 64 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "interaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "revision", "hostNode", "kind", "slots"],
+      "properties": {
+        "id": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id" },
+        "revision": { "type": "integer", "minimum": 1 },
+        "hostNode": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "kind": { "enum": ["seat", "workstation", "keyboard", "bed", "door", "generic"] },
+        "slots": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/slot" },
+          "minItems": 1,
+          "maxItems": 16
+        },
+        "composedOf": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["interactionId", "role"],
+            "properties": {
+              "interactionId": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id" },
+              "role": { "type": "string", "pattern": "^[a-z][a-z0-9._-]{0,63}$" }
+            }
+          },
+          "maxItems": 8
+        },
+        "enabled": { "type": "boolean" },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 64 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "spawnPoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "position", "yawDeg"],
+      "properties": {
+        "id": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id" },
+        "position": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/vector3" },
+        "yawDeg": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/yawDeg" }
+      }
+    }
+  }
+}

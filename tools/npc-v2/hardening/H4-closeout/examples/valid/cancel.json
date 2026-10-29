@@ -1,0 +1,14 @@
+{
+  "apiVersion": "h5a.1",
+  "scope": {
+    "worldId": "room",
+    "actorId": "npc-a",
+    "authorityEpoch": "authority-boot1-1"
+  },
+  "commandId": "cancel-1",
+  "type": "cancel",
+  "target": {
+    "kind": "action",
+    "commandId": "cmd-look-1"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "apiVersion": "h5a.1",
+  "scope": {
+    "worldId": "room",
+    "actorId": "npc-a",
+    "authorityEpoch": "authority-boot1-1"
+  },
+  "cursor": "broker-boot1/13",
+  "type": "resync_required",
+  "data": {
+    "apiVersion": "h5a.1",
+    "code": "RESYNC_REQUIRED",
+    "reason": "cursor outside retained broker epoch/window; fetch snapshot",
+    "retryable": false
+  }
+}

@@ -1,0 +1,12 @@
+# H5a broker runtime (pinned to the versions used by the frozen tests).
+starlette==1.10.0
+uvicorn==0.54.0
+websockets==17.3
+sse-starlette==3.6.0
+jsonschema==4.26.0
+referencing==0.37.0
+rpds-py==2026.9.1
+python-dotenv==1.2.4
+httpx==0.28.1
+httpx-sse==0.4.0
+anyio==4.15.1

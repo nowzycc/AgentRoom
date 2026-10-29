@@ -1,0 +1,30 @@
+{
+  "specVersion": "1.0",
+  "actorId": "companion",
+  "bodyProfileId": "body-companion",
+  "displayName": "Aoi",
+  "capabilities": {
+    "goals": [
+      "work",
+      "think",
+      "converse",
+      "rest",
+      "idle",
+      "lookAround"
+    ],
+    "actions": [
+      "walk",
+      "align",
+      "sit",
+      "stand",
+      "type",
+      "talk"
+    ],
+    "interactions": [
+      "desk-workstation",
+      "chair-main",
+      "keyboard-main",
+      "bed-main"
+    ]
+  }
+}

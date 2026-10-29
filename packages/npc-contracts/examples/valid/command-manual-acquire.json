@@ -1,0 +1,10 @@
+{
+  "specVersion": "1.0",
+  "commandId": "cmd-manual-001",
+  "worldId": "apartment",
+  "actorId": "companion",
+  "type": "manual.acquire",
+  "priorityClass": "manual",
+  "ttlMs": 30000,
+  "onConflict": "replace"
+}

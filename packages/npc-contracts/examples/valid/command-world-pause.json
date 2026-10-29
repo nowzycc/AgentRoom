@@ -1,0 +1,10 @@
+{
+  "specVersion": "1.0",
+  "commandId": "cmd-pause-001",
+  "worldId": "apartment",
+  "actorId": "companion",
+  "type": "world.pause",
+  "priorityClass": "manual",
+  "onConflict": "reject",
+  "reason": "manual inspection"
+}

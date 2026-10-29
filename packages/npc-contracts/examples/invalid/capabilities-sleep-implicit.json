@@ -1,0 +1,25 @@
+{
+  "specVersion": "1.0",
+  "worldId": "apartment",
+  "sceneId": "apartment-v3",
+  "sceneRevision": 3,
+  "authority": {
+    "mode": "none"
+  },
+  "goals": [
+    {
+      "id": "sleep",
+      "available": true
+    }
+  ],
+  "actions": [],
+  "interactions": [],
+  "features": {
+    "manualOverride": true,
+    "maxActors": 1
+  },
+  "limits": {
+    "maxEventPayloadBytes": 65536,
+    "commandsPerMinute": 60
+  }
+}

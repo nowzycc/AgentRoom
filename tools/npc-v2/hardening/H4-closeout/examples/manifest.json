@@ -1,0 +1,187 @@
+[
+  {
+    "path": "examples/valid/action-request.json",
+    "definition": "command",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/goal-request.json",
+    "definition": "command",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/cancel.json",
+    "definition": "cancel",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/event-batch.json",
+    "definition": "eventBatch",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/accepted.json",
+    "definition": "receipt",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/started.json",
+    "definition": "receipt",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/success.json",
+    "definition": "receipt",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/maintaining.json",
+    "definition": "receipt",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/ttl-before-start.json",
+    "definition": "receipt",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/cancel-requested.json",
+    "definition": "receipt",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/delivery-pending.json",
+    "definition": "delivery",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/snapshot.json",
+    "definition": "snapshot",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/resync.json",
+    "definition": "streamEvent",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/receipt-event.json",
+    "definition": "streamEvent",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/capabilities.json",
+    "definition": "capabilities",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/hello.json",
+    "definition": "hello",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/grant.json",
+    "definition": "grant",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/dispatch.json",
+    "definition": "dispatch",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/report.json",
+    "definition": "browserReport",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/report-ack.json",
+    "definition": "reportAck",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/renew.json",
+    "definition": "renew",
+    "valid": true
+  },
+  {
+    "path": "examples/invalid/pose.json",
+    "definition": "command",
+    "valid": false
+  },
+  {
+    "path": "examples/invalid/unsupported-action.json",
+    "definition": "command",
+    "valid": false
+  },
+  {
+    "path": "examples/invalid/deferred-goal.json",
+    "definition": "command",
+    "valid": false
+  },
+  {
+    "path": "examples/invalid/safety-injection.json",
+    "definition": "command",
+    "valid": false
+  },
+  {
+    "path": "examples/invalid/zero-ttl.json",
+    "definition": "command",
+    "valid": false
+  },
+  {
+    "path": "examples/invalid/single-maintaining.json",
+    "definition": "receipt",
+    "valid": false
+  },
+  {
+    "path": "examples/invalid/fake-success.json",
+    "definition": "receipt",
+    "valid": false
+  },
+  {
+    "path": "examples/invalid/unstarted-rejection.json",
+    "definition": "receipt",
+    "valid": false
+  },
+  {
+    "path": "examples/invalid/invalid-event.json",
+    "definition": "eventBatch",
+    "valid": false
+  },
+  {
+    "path": "examples/invalid/cursor.json",
+    "definition": "snapshot",
+    "valid": false
+  },
+  {
+    "path": "examples/invalid/stream-kind.json",
+    "definition": "streamEvent",
+    "valid": false
+  },
+  {
+    "path": "examples/valid/batch-delivery.json",
+    "definition": "batchDelivery",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/batch-receipt.json",
+    "definition": "batchReceipt",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/broker-snapshot.json",
+    "definition": "brokerSnapshot",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/broker-event.json",
+    "definition": "brokerStreamEvent",
+    "valid": true
+  },
+  {
+    "path": "examples/valid/cancel-settled.json",
+    "definition": "receipt",
+    "valid": true
+  }
+]

@@ -1,0 +1,1 @@
+{"extends":"../H4a/tsconfig.json","compilerOptions":{"exactOptionalPropertyTypes":false,"verbatimModuleSyntax":true},"include":["./adapter.ts","./wire.ts","../../../../packages/npc-core/src/planner/goap-minimal.d.ts"]}

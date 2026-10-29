@@ -1,0 +1,23 @@
+{
+  "specVersion": "1.0",
+  "bodyProfileId": "body-companion",
+  "heightMeters": 1.68,
+  "radiusMeters": 0.28,
+  "eyeHeightMeters": 1.58,
+  "hipHeightMeters": 0.92,
+  "reach": {
+    "maxArmMeters": 0.72,
+    "comfortableArmMeters": 0.6
+  },
+  "bones": {
+    "head": "J_Bip_C_Head",
+    "neck": "J_Bip_C_Neck",
+    "chest": "J_Bip_C_Chest",
+    "spine": "J_Bip_C_Spine",
+    "hips": "J_Bip_C_Hips",
+    "leftHand": "J_Bip_L_Hand",
+    "rightHand": "J_Bip_R_Hand",
+    "leftFoot": "J_Bip_L_Foot",
+    "rightFoot": "J_Bip_R_Foot"
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://npc.local/schemas/v1/capabilities.schema.json",
+  "title": "NPC runtime v1 capabilities",
+  "description": "What this world/runtime can actually offer. Absence is a capability gap, never an invitation to fake an animation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "specVersion",
+    "worldId",
+    "sceneId",
+    "sceneRevision",
+    "authority",
+    "goals",
+    "actions",
+    "interactions"
+  ],
+  "properties": {
+    "specVersion": {
+      "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/specVersion"
+    },
+    "worldId": {
+      "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id"
+    },
+    "sceneId": {
+      "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id"
+    },
+    "sceneRevision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "runtime",
+            "none"
+          ]
+        },
+        "epoch": {
+          "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id"
+        },
+        "actorId": {
+          "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id"
+        }
+      }
+    },
+    "goals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "available"
+        ],
+        "properties": {
+          "id": {
+            "enum": [
+              "work",
+              "think",
+              "converse",
+              "rest",
+              "idle",
+              "lookAround",
+              "sleep"
+            ]
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 280
+          }
+        }
+      },
+      "uniqueItems": false
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "available"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9._-]{0,63}$"
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 280
+          }
+        }
+      }
+    },
+    "interactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "available"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id"
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 280
+          }
+        }
+      }
+    },
+    "features": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sleep": {
+          "type": "boolean"
+        },
+        "manualOverride": {
+          "type": "boolean"
+        },
+        "maxActors": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 16
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxEventPayloadBytes": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 1048576
+        },
+        "commandsPerMinute": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 600
+        }
+      }
+    }
+  }
+}

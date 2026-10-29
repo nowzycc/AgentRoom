@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://npc.local/schemas/v1/actor.schema.json",
+  "title": "NPC runtime v1 actor profile",
+  "description": "An actor binds a body profile to the goals, actions and interactions it may use.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["specVersion", "actorId", "bodyProfileId", "displayName", "capabilities"],
+  "properties": {
+    "specVersion": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/specVersion" },
+    "actorId": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id" },
+    "bodyProfileId": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id" },
+    "displayName": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["goals", "actions", "interactions"],
+      "properties": {
+        "goals": {
+          "type": "array",
+          "items": { "enum": ["work", "think", "converse", "rest", "idle", "lookAround", "sleep"] },
+          "uniqueItems": true
+        },
+        "actions": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9._-]{0,63}$" },
+          "uniqueItems": true
+        },
+        "interactions": {
+          "type": "array",
+          "items": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id" },
+          "uniqueItems": true
+        }
+      }
+    }
+  }
+}

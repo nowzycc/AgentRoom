@@ -1,0 +1,33 @@
+{
+  "apiVersion": "h5a.1",
+  "scope": {
+    "worldId": "apartment-v3",
+    "actorId": "npc-a",
+    "authorityEpoch": "fixture-authority"
+  },
+  "commandId": "fixture-cancel",
+  "kind": "cancel",
+  "target": {
+    "kind": "goal",
+    "commandId": "fixture-goal"
+  },
+  "status": "settled",
+  "reason": null,
+  "targetReceipt": {
+    "apiVersion": "h5a.1",
+    "scope": {
+      "worldId": "apartment-v3",
+      "actorId": "npc-a",
+      "authorityEpoch": "fixture-authority"
+    },
+    "commandId": "fixture-goal",
+    "kind": "goal",
+    "accepted": true,
+    "status": "withdrawn",
+    "goalStatus": "withdrawn",
+    "reason": "GOAL_WITHDRAWN",
+    "actionId": null,
+    "attemptId": null,
+    "attempts": []
+  }
+}

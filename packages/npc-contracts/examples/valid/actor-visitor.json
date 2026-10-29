@@ -1,0 +1,26 @@
+{
+  "specVersion": "1.0",
+  "actorId": "visitor",
+  "bodyProfileId": "body-visitor",
+  "displayName": "访客",
+  "capabilities": {
+    "goals": [
+      "work",
+      "think",
+      "converse",
+      "idle"
+    ],
+    "actions": [
+      "walk",
+      "align",
+      "sit",
+      "stand",
+      "type"
+    ],
+    "interactions": [
+      "desk-workstation",
+      "chair-main",
+      "keyboard-main"
+    ]
+  }
+}

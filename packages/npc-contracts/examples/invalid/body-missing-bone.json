@@ -1,0 +1,19 @@
+{
+  "specVersion": "1.0",
+  "bodyProfileId": "body-bad",
+  "heightMeters": 1.7,
+  "radiusMeters": 0.3,
+  "eyeHeightMeters": 1.6,
+  "hipHeightMeters": 0.95,
+  "reach": {
+    "maxArmMeters": 0.7,
+    "comfortableArmMeters": 0.6
+  },
+  "bones": {
+    "head": "Head",
+    "hips": "Hips",
+    "leftHand": "LeftHand",
+    "rightHand": "RightHand",
+    "leftFoot": "LeftFoot"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "apiVersion": "h5a.1",
+  "type": "hello",
+  "worldId": "room",
+  "actorId": "npc-a",
+  "runtimeInstanceId": "browser-runtime-1"
+}

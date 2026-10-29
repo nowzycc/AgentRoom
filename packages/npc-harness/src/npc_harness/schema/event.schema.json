@@ -1,0 +1,280 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://npc.local/schemas/v1/event.schema.json",
+  "title": "NPC runtime v1 external fact",
+  "description": "A fact describes what happened outside the NPC. It never names a bone, scene node or animation.",
+  "allOf": [
+    {
+      "$ref": "https://npc.local/schemas/v1/envelope.schema.json"
+    },
+    {
+      "if": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "run.started"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "run.started"
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+          }
+        },
+        "required": [
+          "data"
+        ]
+      }
+    },
+    {
+      "if": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "run.completed"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "run.completed"
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "outcome"
+            ],
+            "properties": {
+              "outcome": {
+                "enum": [
+                  "success",
+                  "failed",
+                  "cancelled"
+                ]
+              }
+            }
+          },
+          "runId": {
+            "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id"
+          }
+        },
+        "required": [
+          "data",
+          "runId"
+        ]
+      }
+    },
+    {
+      "if": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "tool.started"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "tool.started"
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "toolCallId",
+              "activityClass"
+            ],
+            "properties": {
+              "toolCallId": {
+                "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id"
+              },
+              "activityClass": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9._-]{0,63}$"
+              }
+            }
+          }
+        },
+        "required": [
+          "data"
+        ]
+      }
+    },
+    {
+      "if": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "tool.completed"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "tool.completed"
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "toolCallId",
+              "outcome"
+            ],
+            "properties": {
+              "toolCallId": {
+                "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id"
+              },
+              "outcome": {
+                "enum": [
+                  "success",
+                  "failed",
+                  "cancelled"
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "data"
+        ]
+      }
+    },
+    {
+      "if": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "speech.started"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "speech.started"
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "speechId"
+            ],
+            "properties": {
+              "speechId": {
+                "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id"
+              }
+            }
+          }
+        },
+        "required": [
+          "data"
+        ]
+      }
+    },
+    {
+      "if": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "speech.completed"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "speech.completed"
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "speechId"
+            ],
+            "properties": {
+              "speechId": {
+                "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id"
+              }
+            }
+          }
+        },
+        "required": [
+          "data"
+        ]
+      }
+    },
+    {
+      "if": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "presence.heartbeat"
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "const": "presence.heartbeat"
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "status"
+            ],
+            "properties": {
+              "status": {
+                "enum": [
+                  "alive",
+                  "degraded"
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "data"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "specVersion": "1.0",
+  "sceneId": "ref-scene",
+  "revision": 1,
+  "units": "meters",
+  "upAxis": "Y",
+  "asset": {
+    "uri": "assets/ref.glb"
+  },
+  "interactions": [
+    {
+      "id": "desk",
+      "revision": 1,
+      "hostNode": "Desk",
+      "kind": "workstation",
+      "slots": [
+        {
+          "id": "stand",
+          "pose": "standing",
+          "localTransform": {
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "yawDeg": 0
+          },
+          "facing": {
+            "yawDeg": 180,
+            "toleranceDeg": 8
+          },
+          "approach": {
+            "position": [
+              0,
+              0,
+              0.8
+            ],
+            "radiusMeters": 0.55
+          },
+          "capacity": 1,
+          "capabilities": [
+            "work"
+          ],
+          "compatibleBodyProfiles": [
+            "body-companion",
+            "body-visitor"
+          ]
+        }
+      ],
+      "composedOf": [
+        {
+          "interactionId": "missing-chair",
+          "role": "seat"
+        }
+      ]
+    }
+  ],
+  "spawnPoints": [
+    {
+      "id": "spawn",
+      "position": [
+        0,
+        0,
+        1
+      ],
+      "yawDeg": 180
+    }
+  ]
+}

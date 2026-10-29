@@ -1,0 +1,10 @@
+{
+  "specVersion": "1.0",
+  "commandId": "cmd-bad",
+  "worldId": "apartment",
+  "actorId": "companion",
+  "type": "goal.request",
+  "priorityClass": "task",
+  "ttlMs": 60000,
+  "onConflict": "queue"
+}

@@ -1,0 +1,25 @@
+{
+  "apiVersion": "h5a.1",
+  "scope": {
+    "worldId": "room",
+    "actorId": "npc-a",
+    "authorityEpoch": "authority-boot1-1"
+  },
+  "brokerEpoch": "broker-boot1",
+  "cursor": "broker-boot1/12",
+  "runtimeInstanceId": "browser-runtime-1",
+  "connection": "offline",
+  "freshness": "unknown",
+  "actual": {
+    "goalId": null,
+    "posture": "unknown",
+    "actionId": null,
+    "attemptId": null,
+    "phase": null
+  },
+  "runtimeLastKnown": null,
+  "commands": [],
+  "batches": [],
+  "receiptsComplete": true,
+  "historyComplete": false
+}

@@ -1,0 +1,27 @@
+{
+  "name": "@npc/core",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "NPC runtime v2 domain state, goal arbitration, simulation clock, planner port and safe action execution (M1/M2)",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "evidence:m2": "vite-node scripts/m2-evidence.ts"
+  },
+  "devDependencies": {
+    "@npc/contracts": "file:../npc-contracts",
+    "@types/node": "22.10.2",
+    "esbuild": "0.21.5",
+    "typescript": "5.7.2",
+    "vitest": "2.1.8"
+  },
+  "dependencies": {
+    "goap-minimal": "file:vendor/goap-minimal"
+  }
+}

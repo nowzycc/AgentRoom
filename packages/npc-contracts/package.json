@@ -1,0 +1,25 @@
+{
+  "name": "@npc/contracts",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "NPC runtime v2 protocol contracts: JSON Schemas, TS types and strict parsers",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schemas/*": "./schemas/*"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "ajv": "8.17.1",
+    "ajv-formats": "3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.2",
+    "typescript": "5.7.2",
+    "vitest": "2.1.8"
+  }
+}

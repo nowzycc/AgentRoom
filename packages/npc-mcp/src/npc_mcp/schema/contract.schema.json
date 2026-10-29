@@ -1,0 +1,2117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://npc.local/schemas/h5a.1/contract.schema.json",
+  "title": "H5a.1 站姿fake harness边界契约（网络尚未实现）",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "worldId",
+        "actorId",
+        "authorityEpoch"
+      ],
+      "properties": {
+        "worldId": {
+          "$ref": "#/$defs/id"
+        },
+        "actorId": {
+          "$ref": "#/$defs/id"
+        },
+        "authorityEpoch": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "singlePayload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requestId",
+        "actionKey",
+        "issuedAtWallMs",
+        "ttlMs"
+      ],
+      "properties": {
+        "requestId": {
+          "$ref": "#/$defs/id"
+        },
+        "actionKey": {
+          "const": "lookAround"
+        },
+        "issuedAtWallMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "ttlMs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600000
+        }
+      }
+    },
+    "command": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "apiVersion",
+            "scope",
+            "commandId",
+            "issuedAtWallMs",
+            "ttlMs",
+            "type",
+            "actionKey"
+          ],
+          "properties": {
+            "apiVersion": {
+              "const": "h5a.1"
+            },
+            "scope": {
+              "$ref": "#/$defs/scope"
+            },
+            "commandId": {
+              "$ref": "#/$defs/id"
+            },
+            "issuedAtWallMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "ttlMs": {
+              "type": "integer",
+              "minimum": 1000,
+              "maximum": 3600000
+            },
+            "type": {
+              "const": "action.request"
+            },
+            "actionKey": {
+              "const": "lookAround"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "apiVersion",
+            "scope",
+            "commandId",
+            "issuedAtWallMs",
+            "ttlMs",
+            "type",
+            "goal",
+            "priorityClass",
+            "onConflict"
+          ],
+          "properties": {
+            "apiVersion": {
+              "const": "h5a.1"
+            },
+            "scope": {
+              "$ref": "#/$defs/scope"
+            },
+            "commandId": {
+              "$ref": "#/$defs/id"
+            },
+            "issuedAtWallMs": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            },
+            "ttlMs": {
+              "type": "integer",
+              "minimum": 1000,
+              "maximum": 3600000
+            },
+            "type": {
+              "const": "goal.request"
+            },
+            "goal": {
+              "enum": [
+                "converse",
+                "lookAround",
+                "idle"
+              ]
+            },
+            "priorityClass": {
+              "enum": [
+                "task",
+                "manual"
+              ]
+            },
+            "onConflict": {
+              "enum": [
+                "replace",
+                "reject"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "cancel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "scope",
+        "commandId",
+        "type",
+        "target"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "commandId": {
+          "$ref": "#/$defs/id"
+        },
+        "type": {
+          "const": "cancel"
+        },
+        "target": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "commandId"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "action"
+                },
+                "commandId": {
+                  "$ref": "#/$defs/id"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "commandId"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "goal"
+                },
+                "commandId": {
+                  "$ref": "#/$defs/id"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "eventBatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "scope",
+        "batchId",
+        "events"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "batchId": {
+          "$ref": "#/$defs/id"
+        },
+        "events": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "allOf": [
+              {
+                "$ref": "https://npc.local/schemas/v1/event.schema.json"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "enum": [
+                      "presence.heartbeat",
+                      "run.started",
+                      "run.completed",
+                      "tool.started",
+                      "tool.completed"
+                    ]
+                  },
+                  "sessionId": {
+                    "$ref": "#/$defs/id"
+                  }
+                },
+                "required": [
+                  "sessionId"
+                ]
+              }
+            ]
+          }
+        }
+      }
+    },
+    "terminal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actionId",
+        "attemptId",
+        "actionKey",
+        "outcome",
+        "reason",
+        "atSimMs",
+        "planRevision"
+      ],
+      "properties": {
+        "actionId": {
+          "$ref": "#/$defs/id"
+        },
+        "attemptId": {
+          "$ref": "#/$defs/id"
+        },
+        "actionKey": {
+          "enum": [
+            "lookAround",
+            "turnToSpeaker"
+          ]
+        },
+        "outcome": {
+          "enum": [
+            "success",
+            "failed",
+            "cancelled"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 280
+        },
+        "atSimMs": {
+          "type": "number",
+          "minimum": 0
+        },
+        "planRevision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "actionReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "scope",
+        "commandId",
+        "kind",
+        "accepted",
+        "status",
+        "reason",
+        "actionId",
+        "attemptId",
+        "terminal"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "commandId": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "const": "action"
+        },
+        "accepted": {
+          "type": "boolean"
+        },
+        "status": {
+          "enum": [
+            "rejected",
+            "accepted",
+            "started",
+            "cancel_requested",
+            "succeeded",
+            "cancelled",
+            "failed"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 280
+        },
+        "actionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attemptId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "terminal": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/terminal"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "rejected"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "accepted": {
+                "const": false
+              },
+              "actionId": {
+                "type": "null"
+              },
+              "attemptId": {
+                "type": "null"
+              },
+              "terminal": {
+                "type": "null"
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "not": {
+                  "const": "rejected"
+                }
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "accepted": {
+                "const": true
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "accepted"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "actionId": {
+                "type": "null"
+              },
+              "attemptId": {
+                "type": "null"
+              },
+              "terminal": {
+                "type": "null"
+              },
+              "reason": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "started",
+                  "cancel_requested",
+                  "succeeded"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "actionId": {
+                "$ref": "#/$defs/id"
+              },
+              "attemptId": {
+                "$ref": "#/$defs/id"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "started",
+                  "cancel_requested"
+                ]
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "terminal": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "succeeded"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "terminal": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/terminal"
+                  },
+                  {
+                    "properties": {
+                      "outcome": {
+                        "const": "success"
+                      }
+                    },
+                    "type": "object"
+                  }
+                ]
+              },
+              "reason": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "failed"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "terminal": {
+                "anyOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "allOf": [
+                      {
+                        "$ref": "#/$defs/terminal"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "outcome": {
+                            "const": "failed"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "cancelled"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "terminal": {
+                "anyOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "allOf": [
+                      {
+                        "$ref": "#/$defs/terminal"
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "outcome": {
+                            "const": "cancelled"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "goalReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "scope",
+        "commandId",
+        "kind",
+        "status",
+        "goalStatus",
+        "reason",
+        "attempts"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "commandId": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "const": "goal"
+        },
+        "status": {
+          "enum": [
+            "accepted",
+            "started",
+            "pending",
+            "maintaining",
+            "succeeded",
+            "failed",
+            "withdrawn",
+            "rejected"
+          ]
+        },
+        "goalStatus": {
+          "enum": [
+            "pending",
+            "active",
+            "maintaining",
+            "failed",
+            "withdrawn"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 280
+        },
+        "attempts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/terminal"
+          },
+          "maxItems": 256
+        },
+        "accepted": {
+          "type": "boolean"
+        },
+        "actionId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "attemptId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "succeeded"
+              }
+            },
+            "required": [
+              "status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "goalStatus": {
+                "const": "maintaining"
+              },
+              "attempts": {
+                "type": "array",
+                "minItems": 1,
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "outcome": {
+                      "const": "success"
+                    }
+                  },
+                  "required": [
+                    "outcome"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "receipt": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/actionReceipt"
+        },
+        {
+          "$ref": "#/$defs/goalReceipt"
+        },
+        {
+          "$ref": "#/$defs/cancelReceipt"
+        }
+      ]
+    },
+    "cursor": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:-]+/[0-9]+$",
+      "maxLength": 160
+    },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "code",
+        "reason",
+        "retryable"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "code": {
+          "enum": [
+            "INVALID_REQUEST",
+            "UNAUTHORIZED",
+            "FORBIDDEN_SCOPE",
+            "PAYLOAD_TOO_LARGE",
+            "COMMAND_CONFLICT",
+            "BUSY",
+            "MANUAL_PRIORITY",
+            "SAFETY_PRIORITY",
+            "TTL_EXPIRED",
+            "TTL_TOO_SHORT",
+            "INVALID_ACTION_TIME",
+            "UNSUPPORTED_ACTION",
+            "UNSUPPORTED_GOAL",
+            "COMMAND_LEDGER_FULL",
+            "AUTHORITY_OFFLINE",
+            "STALE_AUTHORITY_EPOCH",
+            "AUTHORITY_BUSY",
+            "RESYNC_REQUIRED",
+            "UNKNOWN_COMMAND",
+            "RATE_LIMITED"
+          ]
+        },
+        "reason": {
+          "type": "string",
+          "maxLength": 280
+        },
+        "retryable": {
+          "type": "boolean"
+        }
+      }
+    },
+    "delivery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "scope",
+        "commandId",
+        "delivery",
+        "execution"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "commandId": {
+          "$ref": "#/$defs/id"
+        },
+        "delivery": {
+          "enum": [
+            "pending",
+            "unknown"
+          ]
+        },
+        "lastReceipt": {
+          "$ref": "#/$defs/receipt"
+        },
+        "execution": {
+          "type": "null"
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "scope",
+        "available",
+        "singleActions",
+        "goals",
+        "singleLedgerCapacity",
+        "persistence"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "available": {
+          "type": "boolean"
+        },
+        "singleActions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "actionKey",
+              "posture",
+              "candidate",
+              "resourceDependencies",
+              "versionDependencies",
+              "channels"
+            ],
+            "properties": {
+              "actionKey": {
+                "const": "lookAround"
+              },
+              "posture": {
+                "const": "standing"
+              },
+              "candidate": {
+                "type": "null"
+              },
+              "resourceDependencies": {
+                "type": "array",
+                "maxItems": 0
+              },
+              "versionDependencies": {
+                "type": "array",
+                "maxItems": 0
+              },
+              "channels": {
+                "const": [
+                  "gaze"
+                ]
+              }
+            }
+          },
+          "maxItems": 1
+        },
+        "goals": {
+          "enum": [
+            [],
+            [
+              "converse",
+              "lookAround",
+              "idle"
+            ]
+          ]
+        },
+        "singleLedgerCapacity": {
+          "const": 256
+        },
+        "persistence": {
+          "const": "memory-only"
+        },
+        "implemented": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "unsupported": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "brokerEpoch": {
+          "$ref": "#/$defs/id"
+        },
+        "recovery": {
+          "const": "close-old-pages-confirm-quiescent-restart-new-epoch"
+        },
+        "quarantine": {
+          "type": "boolean"
+        }
+      }
+    },
+    "snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "scope",
+        "cursor",
+        "runtimeInstanceId",
+        "connection",
+        "observation",
+        "desiredGoal",
+        "actual",
+        "receipts",
+        "receiptsComplete",
+        "historyComplete",
+        "capturedAtWallMs"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "cursor": {
+          "$ref": "#/$defs/cursor"
+        },
+        "runtimeInstanceId": {
+          "$ref": "#/$defs/id"
+        },
+        "connection": {
+          "enum": [
+            "online",
+            "offline",
+            "resyncing"
+          ]
+        },
+        "observation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "sourceEpoch",
+            "source",
+            "sessionId",
+            "receivedAtWallMs"
+          ],
+          "properties": {
+            "state": {
+              "enum": [
+                "unknown",
+                "disconnected",
+                "working",
+                "waiting",
+                "idle",
+                "error"
+              ]
+            },
+            "sourceEpoch": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/id"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "source": {
+              "$ref": "#/$defs/id"
+            },
+            "sessionId": {
+              "$ref": "#/$defs/id"
+            },
+            "receivedAtWallMs": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0
+            }
+          }
+        },
+        "desiredGoal": {
+          "enum": [
+            "converse",
+            "lookAround",
+            "idle",
+            null
+          ]
+        },
+        "actual": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "goalId",
+            "posture",
+            "actionId",
+            "attemptId",
+            "phase"
+          ],
+          "properties": {
+            "goalId": {
+              "enum": [
+                "converse",
+                "lookAround",
+                "idle",
+                null
+              ]
+            },
+            "posture": {
+              "enum": [
+                "standing",
+                "unknown"
+              ]
+            },
+            "actionId": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/id"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "attemptId": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/id"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "phase": {
+              "enum": [
+                "running",
+                "awaiting-evidence",
+                "exiting",
+                "exit-unconfirmed",
+                null
+              ]
+            }
+          }
+        },
+        "receipts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/receipt"
+          },
+          "maxItems": 256
+        },
+        "receiptsComplete": {
+          "type": "boolean"
+        },
+        "historyComplete": {
+          "const": false
+        },
+        "capturedAtWallMs": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      }
+    },
+    "streamEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "scope",
+        "cursor",
+        "type",
+        "data"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "cursor": {
+          "$ref": "#/$defs/cursor"
+        },
+        "type": {
+          "enum": [
+            "receipt",
+            "snapshot",
+            "resync_required"
+          ]
+        },
+        "data": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/receipt"
+            },
+            {
+              "$ref": "#/$defs/snapshot"
+            },
+            {
+              "$ref": "#/$defs/error"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "receipt"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/receipt"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "snapshot"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/snapshot"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "resync_required"
+              }
+            },
+            "required": [
+              "type"
+            ]
+          },
+          "then": {
+            "properties": {
+              "data": {
+                "$ref": "#/$defs/error"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "hello": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "type",
+        "worldId",
+        "actorId",
+        "runtimeInstanceId"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "type": {
+          "const": "hello"
+        },
+        "worldId": {
+          "$ref": "#/$defs/id"
+        },
+        "actorId": {
+          "$ref": "#/$defs/id"
+        },
+        "runtimeInstanceId": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "grant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "scope",
+        "type",
+        "connectionId",
+        "leaseMs",
+        "heartbeatMs"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "type": {
+          "const": "grant"
+        },
+        "connectionId": {
+          "$ref": "#/$defs/id"
+        },
+        "leaseMs": {
+          "const": 5000
+        },
+        "heartbeatMs": {
+          "const": 1000
+        }
+      }
+    },
+    "dispatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "scope",
+        "type",
+        "deliveryId",
+        "operation"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "type": {
+          "const": "dispatch"
+        },
+        "deliveryId": {
+          "$ref": "#/$defs/id"
+        },
+        "operation": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/command"
+            },
+            {
+              "$ref": "#/$defs/cancel"
+            },
+            {
+              "$ref": "#/$defs/eventBatch"
+            }
+          ]
+        }
+      }
+    },
+    "browserReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "scope",
+        "type",
+        "reportId",
+        "runtimeInstanceId",
+        "reportSeq",
+        "deliveryId",
+        "data"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "type": {
+          "const": "report"
+        },
+        "reportId": {
+          "$ref": "#/$defs/id"
+        },
+        "runtimeInstanceId": {
+          "$ref": "#/$defs/id"
+        },
+        "reportSeq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "deliveryId": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/receipt"
+            },
+            {
+              "$ref": "#/$defs/snapshot"
+            },
+            {
+              "$ref": "#/$defs/error"
+            },
+            {
+              "$ref": "#/$defs/batchReceipt"
+            }
+          ]
+        }
+      }
+    },
+    "reportAck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "scope",
+        "type",
+        "reportId",
+        "cursor"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "type": {
+          "const": "report_ack"
+        },
+        "reportId": {
+          "$ref": "#/$defs/id"
+        },
+        "cursor": {
+          "$ref": "#/$defs/cursor"
+        }
+      }
+    },
+    "renew": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "scope",
+        "type",
+        "connectionId",
+        "runtimeInstanceId"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "type": {
+          "const": "renew"
+        },
+        "connectionId": {
+          "$ref": "#/$defs/id"
+        },
+        "runtimeInstanceId": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "batchDelivery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "scope",
+        "batchId",
+        "delivery",
+        "observation"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "batchId": {
+          "$ref": "#/$defs/id"
+        },
+        "delivery": {
+          "enum": [
+            "pending",
+            "unknown"
+          ]
+        },
+        "observation": {
+          "type": "null"
+        }
+      }
+    },
+    "batchReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "scope",
+        "batchId",
+        "results"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "batchId": {
+          "$ref": "#/$defs/id"
+        },
+        "results": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 64,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "index",
+              "eventId",
+              "accepted",
+              "reason",
+              "revision"
+            ],
+            "properties": {
+              "index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 63
+              },
+              "eventId": {
+                "$ref": "#/$defs/id"
+              },
+              "accepted": {
+                "type": "boolean"
+              },
+              "reason": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 280
+              },
+              "revision": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            }
+          }
+        }
+      }
+    },
+    "brokerSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "scope",
+        "brokerEpoch",
+        "cursor",
+        "runtimeInstanceId",
+        "connection",
+        "freshness",
+        "actual",
+        "runtimeLastKnown",
+        "commands",
+        "batches",
+        "receiptsComplete",
+        "historyComplete"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "brokerEpoch": {
+          "$ref": "#/$defs/id"
+        },
+        "cursor": {
+          "$ref": "#/$defs/cursor"
+        },
+        "runtimeInstanceId": {
+          "$ref": "#/$defs/id"
+        },
+        "connection": {
+          "enum": [
+            "online",
+            "offline"
+          ]
+        },
+        "freshness": {
+          "enum": [
+            "last_known",
+            "unknown"
+          ]
+        },
+        "actual": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "goalId",
+            "posture",
+            "actionId",
+            "attemptId",
+            "phase"
+          ],
+          "properties": {
+            "goalId": {
+              "enum": [
+                "converse",
+                "lookAround",
+                "idle",
+                null
+              ]
+            },
+            "posture": {
+              "enum": [
+                "standing",
+                "unknown"
+              ]
+            },
+            "actionId": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/id"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "attemptId": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/id"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "phase": {
+              "enum": [
+                "running",
+                "awaiting-evidence",
+                "exiting",
+                "exit-unconfirmed",
+                null
+              ]
+            }
+          }
+        },
+        "runtimeLastKnown": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "data",
+                "receivedAtWallMs"
+              ],
+              "properties": {
+                "data": {
+                  "$ref": "#/$defs/snapshot"
+                },
+                "receivedAtWallMs": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "commands": {
+          "type": "array",
+          "maxItems": 512,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "commandId",
+              "result"
+            ],
+            "properties": {
+              "commandId": {
+                "$ref": "#/$defs/id"
+              },
+              "result": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/delivery"
+                  },
+                  {
+                    "$ref": "#/$defs/receipt"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "batches": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "batchId",
+              "result"
+            ],
+            "properties": {
+              "batchId": {
+                "$ref": "#/$defs/id"
+              },
+              "result": {
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/batchDelivery"
+                  },
+                  {
+                    "$ref": "#/$defs/batchReceipt"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "receiptsComplete": {
+          "const": true
+        },
+        "historyComplete": {
+          "const": false
+        }
+      }
+    },
+    "brokerStreamEvent": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "apiVersion",
+            "scope",
+            "brokerEpoch",
+            "cursor",
+            "type",
+            "data"
+          ],
+          "properties": {
+            "apiVersion": {
+              "const": "h5a.1"
+            },
+            "scope": {
+              "$ref": "#/$defs/scope"
+            },
+            "brokerEpoch": {
+              "$ref": "#/$defs/id"
+            },
+            "cursor": {
+              "$ref": "#/$defs/cursor"
+            },
+            "type": {
+              "const": "receipt"
+            },
+            "data": {
+              "$ref": "#/$defs/receipt"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "apiVersion",
+            "scope",
+            "brokerEpoch",
+            "cursor",
+            "type",
+            "data"
+          ],
+          "properties": {
+            "apiVersion": {
+              "const": "h5a.1"
+            },
+            "scope": {
+              "$ref": "#/$defs/scope"
+            },
+            "brokerEpoch": {
+              "$ref": "#/$defs/id"
+            },
+            "cursor": {
+              "$ref": "#/$defs/cursor"
+            },
+            "type": {
+              "const": "runtime_snapshot"
+            },
+            "data": {
+              "$ref": "#/$defs/snapshot"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "apiVersion",
+            "scope",
+            "brokerEpoch",
+            "cursor",
+            "type",
+            "data"
+          ],
+          "properties": {
+            "apiVersion": {
+              "const": "h5a.1"
+            },
+            "scope": {
+              "$ref": "#/$defs/scope"
+            },
+            "brokerEpoch": {
+              "$ref": "#/$defs/id"
+            },
+            "cursor": {
+              "$ref": "#/$defs/cursor"
+            },
+            "type": {
+              "const": "batch_receipt"
+            },
+            "data": {
+              "$ref": "#/$defs/batchReceipt"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "apiVersion",
+            "scope",
+            "brokerEpoch",
+            "cursor",
+            "type",
+            "data"
+          ],
+          "properties": {
+            "apiVersion": {
+              "const": "h5a.1"
+            },
+            "scope": {
+              "$ref": "#/$defs/scope"
+            },
+            "brokerEpoch": {
+              "$ref": "#/$defs/id"
+            },
+            "cursor": {
+              "$ref": "#/$defs/cursor"
+            },
+            "type": {
+              "const": "delivery"
+            },
+            "data": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/delivery"
+                },
+                {
+                  "$ref": "#/$defs/batchDelivery"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "apiVersion",
+            "scope",
+            "brokerEpoch",
+            "cursor",
+            "type",
+            "data"
+          ],
+          "properties": {
+            "apiVersion": {
+              "const": "h5a.1"
+            },
+            "scope": {
+              "$ref": "#/$defs/scope"
+            },
+            "brokerEpoch": {
+              "$ref": "#/$defs/id"
+            },
+            "cursor": {
+              "$ref": "#/$defs/cursor"
+            },
+            "type": {
+              "const": "connection"
+            },
+            "data": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "connection",
+                "freshness"
+              ],
+              "properties": {
+                "connection": {
+                  "enum": [
+                    "online",
+                    "offline"
+                  ]
+                },
+                "freshness": {
+                  "const": "unknown"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "apiVersion",
+            "scope",
+            "brokerEpoch",
+            "cursor",
+            "type",
+            "data"
+          ],
+          "properties": {
+            "apiVersion": {
+              "const": "h5a.1"
+            },
+            "scope": {
+              "$ref": "#/$defs/scope"
+            },
+            "brokerEpoch": {
+              "$ref": "#/$defs/id"
+            },
+            "cursor": {
+              "$ref": "#/$defs/cursor"
+            },
+            "type": {
+              "const": "resync_required"
+            },
+            "data": {
+              "$ref": "#/$defs/error"
+            }
+          }
+        }
+      ]
+    },
+    "cancelReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "apiVersion",
+        "scope",
+        "commandId",
+        "kind",
+        "target",
+        "status",
+        "reason",
+        "targetReceipt"
+      ],
+      "properties": {
+        "apiVersion": {
+          "const": "h5a.1"
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "commandId": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "const": "cancel"
+        },
+        "target": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "commandId"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "action"
+                },
+                "commandId": {
+                  "$ref": "#/$defs/id"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "commandId"
+              ],
+              "properties": {
+                "kind": {
+                  "const": "goal"
+                },
+                "commandId": {
+                  "$ref": "#/$defs/id"
+                }
+              }
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "requested",
+            "settled",
+            "rejected"
+          ]
+        },
+        "reason": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 280
+        },
+        "targetReceipt": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/actionReceipt"
+            },
+            {
+              "$ref": "#/$defs/goalReceipt"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/command"
+    },
+    {
+      "$ref": "#/$defs/cancel"
+    },
+    {
+      "$ref": "#/$defs/eventBatch"
+    },
+    {
+      "$ref": "#/$defs/receipt"
+    },
+    {
+      "$ref": "#/$defs/delivery"
+    },
+    {
+      "$ref": "#/$defs/capabilities"
+    },
+    {
+      "$ref": "#/$defs/snapshot"
+    },
+    {
+      "$ref": "#/$defs/streamEvent"
+    },
+    {
+      "$ref": "#/$defs/hello"
+    },
+    {
+      "$ref": "#/$defs/grant"
+    },
+    {
+      "$ref": "#/$defs/dispatch"
+    },
+    {
+      "$ref": "#/$defs/browserReport"
+    },
+    {
+      "$ref": "#/$defs/reportAck"
+    },
+    {
+      "$ref": "#/$defs/renew"
+    },
+    {
+      "$ref": "#/$defs/error"
+    },
+    {
+      "$ref": "#/$defs/batchDelivery"
+    },
+    {
+      "$ref": "#/$defs/batchReceipt"
+    },
+    {
+      "$ref": "#/$defs/brokerSnapshot"
+    },
+    {
+      "$ref": "#/$defs/brokerStreamEvent"
+    }
+  ]
+}

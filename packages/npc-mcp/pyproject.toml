@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "npc-mcp"
+version = "0.1.0"
+description = "MCP stdio boundary for the single-authority NPC H5a runtime"
+requires-python = ">=3.11"
+dependencies = ["mcp==2.3.0", "npc-harness==0.1.0", "httpx==0.28.1", "jsonschema==4.26.0", "python-dotenv==1.2.2"]
+
+[project.optional-dependencies]
+test = ["pytest==9.0.2", "uvicorn==0.41.0", "starlette==1.3.1", "sse-starlette==3.4.8", "websockets==15.0.1"]
+
+[project.scripts]
+npc-mcp = "npc_mcp.server:main"
+
+[tool.uv.sources]
+npc-harness = { path = "../npc-harness" }
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/npc_mcp"]

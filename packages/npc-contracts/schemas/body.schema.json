@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://npc.local/schemas/v1/body.schema.json",
+  "title": "NPC runtime v1 body profile",
+  "description": "Character-side semantic bone map and reach metrics. Scene node names are not valid here.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "specVersion",
+    "bodyProfileId",
+    "heightMeters",
+    "radiusMeters",
+    "eyeHeightMeters",
+    "hipHeightMeters",
+    "reach",
+    "bones"
+  ],
+  "properties": {
+    "specVersion": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/specVersion" },
+    "bodyProfileId": { "$ref": "https://npc.local/schemas/v1/common.schema.json#/$defs/id" },
+    "heightMeters": { "type": "number", "minimum": 1.2, "maximum": 2.2 },
+    "radiusMeters": { "type": "number", "minimum": 0.15, "maximum": 0.6 },
+    "eyeHeightMeters": { "type": "number", "minimum": 1.0, "maximum": 2.1 },
+    "hipHeightMeters": { "type": "number", "minimum": 0.4, "maximum": 1.3 },
+    "reach": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxArmMeters", "comfortableArmMeters"],
+      "properties": {
+        "maxArmMeters": { "type": "number", "minimum": 0.3, "maximum": 1.2 },
+        "comfortableArmMeters": { "type": "number", "minimum": 0.2, "maximum": 1.1 }
+      }
+    },
+    "bones": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["head", "hips", "leftHand", "rightHand", "leftFoot", "rightFoot"],
+      "properties": {
+        "head": { "$ref": "#/$defs/boneName" },
+        "neck": { "$ref": "#/$defs/boneName" },
+        "chest": { "$ref": "#/$defs/boneName" },
+        "spine": { "$ref": "#/$defs/boneName" },
+        "hips": { "$ref": "#/$defs/boneName" },
+        "leftHand": { "$ref": "#/$defs/boneName" },
+        "rightHand": { "$ref": "#/$defs/boneName" },
+        "leftFoot": { "$ref": "#/$defs/boneName" },
+        "rightFoot": { "$ref": "#/$defs/boneName" }
+      }
+    }
+  },
+  "$defs": {
+    "boneName": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:-]{1,128}$"
+    }
+  }
+}

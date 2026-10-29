@@ -1,0 +1,29 @@
+{
+  "apiVersion": "h5a.1",
+  "scope": {
+    "worldId": "room",
+    "actorId": "npc-a",
+    "authorityEpoch": "authority-boot1-1"
+  },
+  "type": "report",
+  "reportId": "report-1",
+  "runtimeInstanceId": "browser-runtime-1",
+  "reportSeq": 1,
+  "deliveryId": "delivery-1",
+  "data": {
+    "apiVersion": "h5a.1",
+    "scope": {
+      "worldId": "room",
+      "actorId": "npc-a",
+      "authorityEpoch": "authority-boot1-1"
+    },
+    "commandId": "cmd-look-1",
+    "kind": "action",
+    "accepted": true,
+    "status": "accepted",
+    "reason": null,
+    "actionId": null,
+    "attemptId": null,
+    "terminal": null
+  }
+}

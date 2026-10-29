@@ -1,0 +1,118 @@
+{
+  "specVersion": "1.0",
+  "sceneId": "studio-v1",
+  "revision": 1,
+  "units": "meters",
+  "upAxis": "Y",
+  "asset": {
+    "uri": "assets/studio.glb"
+  },
+  "interactions": [
+    {
+      "id": "stool-main",
+      "revision": 1,
+      "hostNode": "Stool_Main",
+      "kind": "seat",
+      "slots": [
+        {
+          "id": "seat",
+          "pose": "sitting",
+          "localTransform": {
+            "position": [
+              0,
+              0.48,
+              0
+            ],
+            "yawDeg": 0
+          },
+          "facing": {
+            "yawDeg": 90,
+            "toleranceDeg": 8
+          },
+          "approach": {
+            "position": [
+              0,
+              0,
+              0.8
+            ],
+            "radiusMeters": 0.55
+          },
+          "capacity": 1,
+          "capabilities": [
+            "sit",
+            "think"
+          ],
+          "compatibleBodyProfiles": [
+            "body-companion",
+            "body-visitor"
+          ],
+          "exit": {
+            "position": [
+              0,
+              0,
+              0.95
+            ],
+            "radiusMeters": 0.55
+          }
+        }
+      ]
+    },
+    {
+      "id": "bench-combo",
+      "revision": 1,
+      "hostNode": "Bench_Work",
+      "kind": "workstation",
+      "slots": [
+        {
+          "id": "bench-stand",
+          "pose": "standing",
+          "localTransform": {
+            "position": [
+              0,
+              0,
+              0.3
+            ],
+            "yawDeg": 180
+          },
+          "facing": {
+            "yawDeg": 180,
+            "toleranceDeg": 8
+          },
+          "approach": {
+            "position": [
+              0,
+              0,
+              0.8
+            ],
+            "radiusMeters": 0.55
+          },
+          "capacity": 1,
+          "capabilities": [
+            "work"
+          ],
+          "compatibleBodyProfiles": [
+            "body-companion",
+            "body-visitor"
+          ]
+        }
+      ],
+      "composedOf": [
+        {
+          "interactionId": "stool-main",
+          "role": "seat"
+        }
+      ]
+    }
+  ],
+  "spawnPoints": [
+    {
+      "id": "spawn-studio",
+      "position": [
+        1.5,
+        0,
+        1.5
+      ],
+      "yawDeg": 180
+    }
+  ]
+}

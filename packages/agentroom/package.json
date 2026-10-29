@@ -1,0 +1,15 @@
+{
+  "name": "agentroom",
+  "productName": "AgentRoom",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AgentRoom 桌面壳（私用预览）：Electron + 原H5a sidecar + 冻结R4传输dist",
+  "main": "main/main.js",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "@electron/asar": "^3.4.1"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "apiVersion": "h5a.1",
+  "scope": {
+    "worldId": "room",
+    "actorId": "npc-a",
+    "authorityEpoch": "authority-boot1-1"
+  },
+  "batchId": "batch-1",
+  "results": [
+    {
+      "index": 0,
+      "eventId": "e-1",
+      "accepted": true,
+      "reason": null,
+      "revision": 1
+    },
+    {
+      "index": 1,
+      "eventId": "e-2",
+      "accepted": true,
+      "reason": null,
+      "revision": 2
+    },
+    {
+      "index": 2,
+      "eventId": "e-3",
+      "accepted": true,
+      "reason": null,
+      "revision": 3
+    }
+  ]
+}

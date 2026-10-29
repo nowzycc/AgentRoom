@@ -1,0 +1,28 @@
+import Ajv2020 from '../../../../packages/npc-contracts/node_modules/ajv/dist/2020.js';
+import addFormats from '../../../../packages/npc-contracts/node_modules/ajv-formats/dist/index.js';
+import schema from '../H4-closeout/schema/contract.schema.json';
+import common from '../../../../packages/npc-contracts/schemas/common.schema.json';
+import envelope from '../../../../packages/npc-contracts/schemas/envelope.schema.json';
+import event from '../../../../packages/npc-contracts/schemas/event.schema.json';
+import type { EventEnvelope } from '../../../../packages/npc-contracts/src/types.js';
+export { canonicalJson } from '../../../../packages/npc-core/src/domain/commands.js';
+export { HarnessBridge } from '../../../../packages/npc-core/src/harness/bridge.js';
+export { parseHarnessEvent, parseHarnessPolicy } from '../../../layout-model-v3/web/harness-preview/boundary.js';
+export type Scope = { readonly worldId: string; readonly actorId: string; readonly authorityEpoch: string };
+type Timed = { readonly apiVersion: 'h5a.1'; readonly scope: Scope; readonly commandId: string; readonly issuedAtWallMs: number; readonly ttlMs: number };
+export type GoalOperation = Timed & { readonly type: 'goal.request'; readonly goal: 'converse' | 'lookAround' | 'idle'; readonly priorityClass: 'task' | 'manual'; readonly onConflict: 'replace' | 'reject' };
+export type CancelOperation = { readonly apiVersion: 'h5a.1'; readonly scope: Scope; readonly commandId: string; readonly type: 'cancel'; readonly target: { readonly kind: 'action' | 'goal'; readonly commandId: string } };
+export type Operation = GoalOperation | CancelOperation | { readonly apiVersion: 'h5a.1'; readonly scope: Scope; readonly commandId: string; readonly type: 'action.request'; readonly actionKey: 'lookAround'; readonly issuedAtWallMs: number; readonly ttlMs: number } |
+ { readonly apiVersion: 'h5a.1'; readonly scope: Scope; readonly batchId: string; readonly events: readonly EventEnvelope[] };
+export type Grant = { readonly type: 'grant'; readonly scope: Scope; readonly connectionId: string; readonly leaseMs: number; readonly heartbeatMs: number };
+export type Dispatch = { readonly type: 'dispatch'; readonly scope: Scope; readonly deliveryId: string; readonly operation: Operation };
+export type Ack = { readonly type: 'report_ack'; readonly reportId: string; readonly cursor: string };
+export type WireError = { readonly code: string; readonly reason: string; readonly apiVersion: string };
+const ajv = new Ajv2020({ strict: true, allErrors: true, coerceTypes: false, useDefaults: false, removeAdditional: false });
+addFormats(ajv);
+for (const doc of [common, envelope, event, schema]) ajv.addSchema(doc);
+export const grant = ajv.compile<Grant>({ $ref: schema.$id + '#/$defs/grant' });
+export const dispatch = ajv.compile<Dispatch>({ $ref: schema.$id + '#/$defs/dispatch' });
+export const ack = ajv.compile<Ack>({ $ref: schema.$id + '#/$defs/reportAck' });
+export const wireError = ajv.compile<WireError>({ $ref: schema.$id + '#/$defs/error' });
+export const reportValid = ajv.compile({ $ref: schema.$id + '#/$defs/browserReport' });

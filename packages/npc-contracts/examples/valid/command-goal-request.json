@@ -1,0 +1,16 @@
+{
+  "specVersion": "1.0",
+  "commandId": "cmd-work-001",
+  "worldId": "apartment",
+  "actorId": "companion",
+  "type": "goal.request",
+  "goal": "work",
+  "priorityClass": "task",
+  "ttlMs": 60000,
+  "constraints": {
+    "capability": "workstation"
+  },
+  "onConflict": "queue",
+  "correlationId": "task-a",
+  "issuedAt": "2026-10-25T02:00:01+08:00"
+}

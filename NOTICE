@@ -1,0 +1,60 @@
+# Third-party notices
+
+This repository contains source code only. The following third-party
+components are either vendored or required at build time.
+
+## goap-minimal
+
+- Path: `packages/npc-core/vendor/goap-minimal`
+- Copyright (c) 2026 Robert Sirois
+- License: MIT
+- Source: https://github.com/rpsirois/goap-minimal
+
+## three.js
+
+Imported at runtime by the scene page (`three` remains a bare import in the
+built bundles and is resolved by the import map). MIT License,
+Copyright © 2010-2026 three.js authors.
+Source: https://github.com/mrdoob/three.js
+
+## Bundled in the built preview files
+
+`tools/layout-model-v3/web/harness-preview/` contains committed build
+artifacts. They inline:
+
+| Package | File | License | Copyright |
+|---|---|---|---|
+| `@pixiv/three-vrm` 3.5.5 | `npc-h4a-core.js` | MIT | pixiv Inc. |
+| `astar-minimal` | `npc-h4a-core.js`, `npc-h4a-worker.js` | MIT | Robert Sirois |
+| `ajv` 8.x | `boundary.js` | MIT | Evgeny Poberezkin |
+| `ajv-formats` | `boundary.js` | MIT | Evgeny Poberezkin |
+
+See `tools/layout-model-v3/web/harness-preview/THIRD-PARTY.md` for details.
+
+## JSON Schema validators
+
+`jsonschema`, `referencing`, `rpds-py` — MIT / Apache-2.0 depending on package.
+See the respective package metadata.
+
+## Motion data attribution (not distributed here)
+
+If you supply motion data derived from the CMU Graphics Lab Motion Capture
+Database, include this attribution:
+
+> The data used in this project was obtained from mocap.cs.cmu.edu.
+> The database was created with funding from NSF EIA-0196217.
+
+CMU terms permit copying, modification, and redistribution, but prohibit
+reselling the data directly, including in converted form.
+
+## VRM sample models (not distributed here)
+
+VRoid sample models are **not CC0**. They may be used by anyone for any
+activity, for-profit or not, without attribution, but redistributing the model
+file under a CC0 designation, or selling the model file itself, is prohibited.
+See `ASSETS.md`.
+
+## Mixamo-derived animation (not distributed here)
+
+Mixamo-derived clips used during development are subject to Adobe's terms and
+are excluded from this repository and from any release artifact.

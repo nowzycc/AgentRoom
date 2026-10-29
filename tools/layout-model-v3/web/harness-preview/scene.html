@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><base href="../">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>新公寓 · 可移动座椅 C0–C4（独立入口）</title>
+<link rel="stylesheet" href="./movable-seat/preview.css">
+<script src="./vendor/ammo/ammo.wasm.js"></script>
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }
+</script>
+</head>
+<body>
+<canvas id="stage"></canvas>
+
+<header id="hud">
+  <div class="headline">
+    <div class="eyebrow">APARTMENT V3 · MOVABLE SEAT · C0–C4</div>
+    <h1>可移动座椅 <span class="sub">拉出 · 坐下 · 坐姿移近桌面 · 开灯 · 起身</span></h1>
+  </div>
+  <div class="chips">
+    <span class="chip" id="chip-goal">goal —</span>
+    <span class="chip" id="chip-plan">plan —</span>
+    <span class="chip" id="chip-action">action —</span>
+    <span class="chip" id="chip-claim">claim —</span>
+    <span class="chip" id="chip-fps">fps —</span>
+    <span class="chip" id="chip-phys">phys —</span>
+  </div>
+</header>
+
+<aside id="detail" class="panel">
+  <div class="eyebrow">可移动座椅（真实 Ammo 刚体 · 单世界）</div>
+  <h2 id="device-name">载入中…</h2>
+  <div id="device-state" class="statebox">—</div>
+  <div class="kv" id="device-kv"></div>
+  <div class="section-title">可移动座椅状态 / 租约 / 阶段</div>
+  <div class="kv" id="chair-kv">—</div>
+  <div class="section-title">能力查询（真实几何）</div>
+  <div class="kv" id="audit-kv">—</div>
+  <div class="section-title">手掌接触 / 动作阶段</div>
+  <div class="kv" id="contact-kv">—</div>
+  <div class="section-title">Facts / 失败</div>
+  <div class="kv" id="facts-kv">—</div>
+  <div class="section-title">物理世界（Ammo · 单一 world）</div>
+  <div class="kv" id="physics-kv">—</div>
+</aside>
+
+<div id="eventlog" class="eventlog">
+  <div class="panel-head"><span>事件（按 sim 时间）</span><span class="mono" id="event-count">0</span></div>
+  <ol id="event-list"></ol>
+</div>
+
+<div id="toolbar" class="toolbar">
+  <div class="seg">
+    <span class="seg-label">C1–C4 目标链</span>
+    <button id="btn-seat" class="primary">拉椅 → 坐下 → 移近 → 开灯</button>
+    <button id="btn-pull">只拉出椅子</button>
+    <button id="btn-rotate">旋转椅 90°</button>
+  </div>
+  <div class="seg">
+    <span class="seg-label">坐姿 / 起身</span>
+    <button id="btn-seated-move">坐姿移近桌面</button>
+    <button id="btn-stand">起身（空间不足先退椅）</button>
+    <button id="btn-on" class="primary">开灯（GOAP）</button>
+    <button id="btn-off">关灯（GOAP）</button>
+    <button id="btn-cancel">取消</button>
+  </div>
+  <div class="seg">
+    <span class="seg-label">冰箱（已有站姿链）</span>
+    <button id="btn-fridge-open" class="primary">开冰箱门（NPC）</button>
+    <button id="btn-fridge-occupy">他人占用冰箱门</button>
+  </div>
+  <div class="seg">
+    <span class="seg-label">对照 / 测试</span>
+    <button id="btn-audit">能力查询</button>
+    <button id="btn-occupy">他人占用开关</button>
+    <button id="btn-block">前方 1 m 放挡块</button>
+    <button id="btn-unblock">移走挡块</button>
+    <button id="btn-door">开/关冰箱门</button>
+    <button id="btn-doorsweep">门扫掠/穿人测试</button>
+    <button id="btn-physreset">重置物理</button>
+    <button id="btn-chair-reset">座椅复位</button>
+    <button id="btn-reset-cam">复位视角</button>
+  </div>
+  <div class="seg">
+    <span class="seg-label">视角</span>
+    <button data-cam="lamp" class="active">台灯</button>
+    <button data-cam="contact">接触</button>
+    <button data-cam="wide">全景</button>
+    <button data-cam="fridge">冰箱</button>
+    <button data-cam="chair">座椅</button>
+  </div>
+</div>
+
+<div id="boundary" class="boundary">
+  真实链路：求解合法入口 → 走到椅背抓手 → 实测手掌接触 → 手部 Point2Point 约束拉椅 → 停稳撤手 →
+  运行时 GOAP 走桌并坐下 → 坐姿力驱动移近桌面 → GOAP 开灯 → 起身空间检查（不足先坐姿退椅）。
+  椅子由同一 Ammo 世界的两个刚体（支撑面 + 阻挡件，固定约束）驱动，显示、座面槽位、导航障碍读取同一解算位姿。
+  坐姿移椅的脚部是程序化滑动（非动捕）；软体/坐垫路线仍停止，未宣称全身无穿插。
+</div>
+
+<div id="loading" class="loading"><div class="spinner"></div><div>载入公寓 GLB、VRM、规划器与座椅资源…</div></div>
+<div id="err" class="err" hidden></div>
+
+<script type="module" src="./harness-preview/scene-app.js"></script>
+</body>
+</html>

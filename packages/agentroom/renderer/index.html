@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self'; frame-src 'self'">
+<!-- unsafe-eval 仅因冻结 R4 adapter 内置 Ajv 运行时编译 schema（new Function）；来源仍限同源 -->
+<title>AgentRoom（私用预览）</title>
+<link rel="stylesheet" href="/shell.css">
+</head>
+<body>
+<!-- 冻结 adapter 依赖 #credential/#connect/#status/#scene；#credential/#connect 隐藏，由壳自动配对 -->
+<iframe id="scene" title="真实NPC场景" src="/room/web/harness-preview/scene.html"></iframe>
+<input id="credential" type="password" autocomplete="off" tabindex="-1" aria-hidden="true">
+<button id="connect" type="button" tabindex="-1" aria-hidden="true"></button>
+
+<section id="panel" class="panel">
+  <header id="panel-head">
+    <button id="btn-panel" type="button" title="折叠/展开">▾ 状态 / 命令</button>
+    <span id="conn-dot" class="dot off"></span>
+  </header>
+  <div id="panel-body">
+    <p id="status-line">场景加载中…</p>
+    <p class="line">实际姿态/相位：<span id="posture">—</span> · 目标：<span id="goal">—</span></p>
+    <p class="line">连接：<span id="mirror">等待配对</span></p>
+    <div id="actions">
+      <button id="btn-look" type="button">环顾（单次）</button>
+      <button id="btn-converse" type="button">converse 目标</button>
+      <button id="btn-idle" type="button">idle 目标</button>
+      <button id="btn-cancel" type="button">显式取消</button>
+      <button id="btn-exit" type="button">退出</button>
+    </div>
+    <ol id="receipts" reversed></ol>
+    <p class="fine">回执 = 服务端命令状态；动作完成以「实际姿态/相位」为准。本版为显式命令演示，未接入会话自动监听。</p>
+  </div>
+</section>
+<script type="module" src="/h5/adapter.js"></script>
+<script src="/shell.js"></script>
+</body>
+</html>

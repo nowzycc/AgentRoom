@@ -1,0 +1,13 @@
+{
+  "apiVersion": "h5a.1",
+  "scope": {
+    "worldId": "room",
+    "actorId": "npc-a",
+    "authorityEpoch": "authority-boot1-1"
+  },
+  "commandId": "cmd-look-1",
+  "issuedAtWallMs": 1793180400000,
+  "ttlMs": 10000,
+  "type": "action.request",
+  "actionKey": "standUp"
+}

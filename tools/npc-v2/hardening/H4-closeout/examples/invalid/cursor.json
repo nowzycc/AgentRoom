@@ -1,0 +1,69 @@
+{
+  "apiVersion": "h5a.1",
+  "scope": {
+    "worldId": "room",
+    "actorId": "npc-a",
+    "authorityEpoch": "authority-boot1-1"
+  },
+  "cursor": "12",
+  "runtimeInstanceId": "browser-runtime-1",
+  "connection": "online",
+  "observation": {
+    "state": "working",
+    "sourceEpoch": "source-boot1",
+    "source": "fake:h5a",
+    "sessionId": "session-1",
+    "receivedAtWallMs": 1793180400000
+  },
+  "desiredGoal": "converse",
+  "actual": {
+    "goalId": "converse",
+    "posture": "standing",
+    "actionId": null,
+    "attemptId": null,
+    "phase": null
+  },
+  "receipts": [
+    {
+      "apiVersion": "h5a.1",
+      "scope": {
+        "worldId": "room",
+        "actorId": "npc-a",
+        "authorityEpoch": "authority-boot1-1"
+      },
+      "commandId": "cmd-look-1",
+      "kind": "action",
+      "accepted": true,
+      "status": "succeeded",
+      "reason": null,
+      "actionId": "single-1-1",
+      "attemptId": "single-1-1:attempt:1",
+      "terminal": {
+        "actionId": "single-1-1",
+        "attemptId": "single-1-1:attempt:1",
+        "actionKey": "lookAround",
+        "outcome": "success",
+        "reason": null,
+        "atSimMs": 1200,
+        "planRevision": 7
+      }
+    },
+    {
+      "apiVersion": "h5a.1",
+      "scope": {
+        "worldId": "room",
+        "actorId": "npc-a",
+        "authorityEpoch": "authority-boot1-1"
+      },
+      "commandId": "cmd-goal-1",
+      "kind": "goal",
+      "status": "maintaining",
+      "goalStatus": "maintaining",
+      "reason": "CURRENT_GOAL_SATISFIED",
+      "attempts": []
+    }
+  ],
+  "receiptsComplete": true,
+  "historyComplete": false,
+  "capturedAtWallMs": 1793180402000
+}

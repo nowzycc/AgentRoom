@@ -1,0 +1,18 @@
+{
+  "specVersion": "1.0",
+  "eventId": "evt-tool-001",
+  "source": "hermes:default",
+  "sourceEpoch": "boot-a",
+  "sequence": 42,
+  "worldId": "apartment",
+  "actorId": "companion",
+  "sessionId": "session-a",
+  "runId": "run-a",
+  "type": "tool.started",
+  "occurredAt": "2026-10-25T02:00:00+08:00",
+  "correlationId": "task-a",
+  "data": {
+    "toolCallId": "call-a",
+    "activityClass": "research"
+  }
+}
