@@ -156,8 +156,11 @@ def test_symlink_in_source_is_preserved_not_followed(home, tmp_path):
         target_link = home / ".hermes" / "skills" / "agentroom" / "link-probe.txt"
         assert target_link.is_symlink()
         # Windows returns an extended-length (\\?\C:\...) link target; realpath
-        # normalizes it back to the plain absolute path.
-        assert os.path.normcase(os.path.realpath(os.readlink(target_link))) == \
-            os.path.normcase(os.path.realpath(outside))
+        # keeps the prefix, so strip it before comparing.
+        raw = os.readlink(target_link)
+        if raw.startswith("\\\\?\\"):
+            raw = raw[4:]
+        assert os.path.normcase(os.path.abspath(raw)) == \
+            os.path.normcase(os.path.abspath(str(outside)))
     finally:
         link.unlink()
