@@ -1,0 +1,165 @@
+/* AgentRoom 接入向导 — 纯静态样式，无外部资源；配色与桌面壳一致（#111923）。 */
+:root {
+  color-scheme: dark;
+  --bg: #111923;
+  --panel: #182430;
+  --line: #2a3b4d;
+  --text: #dce7f2;
+  --muted: #8aa0b4;
+  --ok: #4fd07a;
+  --bad: #e0655f;
+  --warn: #e0b95f;
+  --accent: #4da3ff;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.5 "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  user-select: text;
+}
+
+#steps {
+  display: flex;
+  gap: 4px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+#steps .step {
+  flex: 1;
+  text-align: center;
+  padding: 4px 2px;
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+#steps .step.active { background: #223247; color: var(--text); }
+#steps .step.done { color: var(--ok); }
+
+main { flex: 1; overflow: auto; padding: 18px 22px; }
+.screen { display: none; }
+.screen.active { display: block; }
+h1 { font-size: 17px; margin: 0 0 10px; }
+.fine { color: var(--muted); font-size: 12px; margin: 6px 0 14px; }
+.warn { color: var(--warn); font-size: 12px; }
+
+.lamp-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  margin: 6px 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+.lamp-row .dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--muted);
+}
+.lamp-row.ok .dot { background: var(--ok); }
+.lamp-row.bad .dot { background: var(--bad); }
+.lamp-row b { display: block; font-size: 13px; }
+.path {
+  display: block;
+  color: var(--muted);
+  font: 11px/1.4 ui-monospace, Consolas, monospace;
+  word-break: break-all;
+}
+.detected { margin-top: 14px; }
+
+.cards { display: flex; gap: 12px; flex-wrap: wrap; }
+.card {
+  flex: 1 1 220px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  cursor: pointer;
+}
+.card:hover { border-color: var(--accent); }
+.card.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.card input { margin-top: 3px; }
+.card.selected { border-color: var(--accent); background: #1c2c40; }
+.profile-line { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; }
+select {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+
+.paths div { margin: 8px 0; }
+.paths b { display: block; font-size: 12px; color: var(--muted); }
+
+button {
+  background: #223247;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 7px 16px;
+  cursor: pointer;
+  font-size: 13px;
+}
+button:hover:not(:disabled) { border-color: var(--accent); }
+button:disabled { opacity: 0.4; cursor: not-allowed; }
+.actions { display: flex; gap: 10px; margin: 14px 0; }
+
+.result {
+  background: #0c131b;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  max-height: 220px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  font: 12px/1.5 ui-monospace, Consolas, monospace;
+}
+.result.ok { border-color: var(--ok); }
+.result.bad { border-color: var(--bad); }
+
+.verdict { font-size: 15px; font-weight: 600; margin: 12px 0 6px; }
+.verdict.ok { color: var(--ok); }
+.verdict.bad { color: var(--bad); }
+
+.tools { list-style: none; padding: 0; margin: 10px 0; }
+.tools li {
+  padding: 5px 10px;
+  margin: 3px 0;
+  border-radius: 6px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font: 12px ui-monospace, Consolas, monospace;
+}
+.tools li::before { content: "• "; }
+.tools li.pass { color: var(--ok); border-color: var(--ok); }
+.tools li.pass::before { content: "✓ "; }
+.tools li.fail { color: var(--bad); border-color: var(--bad); }
+.tools li.fail::before { content: "✗ "; }
+
+footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--line);
+  background: var(--panel);
+}
+#footer-msg { flex: 1; text-align: center; color: var(--muted); font-size: 12px; }

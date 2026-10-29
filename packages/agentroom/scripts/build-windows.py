@@ -19,6 +19,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import re
 import shutil
 import struct
 import subprocess
@@ -36,7 +38,7 @@ APP_NAME = 'AgentRoom'
 VERSION = '0.1.0'
 OUT = RELEASES / f'{APP_NAME}-win32-x64'
 ZIP_PATH = RELEASES / f'{APP_NAME}-win32-x64-{VERSION}.zip'
-NODE = Path('<home>/.nvm/versions/node/v22.22.1/bin/node')
+NODE = Path(os.environ.get('AGENTROOM_NODE') or shutil.which('node') or 'node')
 ASAR_JS = PKG / 'node_modules' / '@electron/asar' / 'bin' / 'asar.js'
 FROZEN_SHA = '0ba29206942e2f8caf898f358788897dc8d6ac12959910c08e5b81e5b43ab619'
 EXPECTED = {
@@ -115,6 +117,84 @@ def install_backend() -> Path:
     return target
 
 
+# Trim runtime pieces this product never loads. dxcompiler/vk_swiftshader serve
+# WebGPU/Vulkan fallback (we render WebGL2 through ANGLE/D3D11); pythonwin and
+# win32comext are pywin32 GUI/COM extras the MCP server never imports.
+PRUNE = [
+    'dxcompiler.dll',
+    'vk_swiftshader.dll',
+    'vk_swiftshader_icd.json',
+    'Lib/site-packages/pythonwin',
+    'Lib/site-packages/win32comext',
+]
+
+
+def prune_runtime() -> None:
+    for relative in PRUNE:
+        target = OUT / relative
+        if target.is_dir():
+            shutil.rmtree(target)
+        elif target.exists():
+            target.unlink()
+
+
+def install_agent(backend: Path, runtime: Path) -> Path:
+    """Copy the MCP launcher/skill/config and install the MCP server deps."""
+    agent_src = PKG / 'agent'
+    agent_dst = OUT / 'resources' / 'app.asar.unpacked' / 'agent'
+    if not agent_src.is_dir():
+        raise SystemExit('agent/ missing: run the W1/W2/W3 tasks first')
+    shutil.copytree(agent_src, agent_dst)
+    # agent/config/*.js requires 'yaml'; keep it next to agent/ so unpacked
+    # modules resolve it without reading inside app.asar.
+    yaml_src = PKG / 'node_modules' / 'yaml'
+    if yaml_src.is_dir():
+        shutil.copytree(yaml_src, agent_dst / 'node_modules' / 'yaml')
+    else:
+        raise SystemExit('node_modules/yaml missing (npm install first)')
+    site = runtime / 'Lib' / 'site-packages'
+    for package in ('npc_mcp', 'npc_harness'):
+        source = PKG.parent / ('npc-mcp/src/' if package == 'npc_mcp' else 'npc-harness/src/') / package
+        if not source.is_dir():
+            raise SystemExit(f'source package missing: {source}')
+        shutil.copytree(source, site / package, dirs_exist_ok=True)
+    wheels = VENDOR / 'wheels-win-agent'
+    wheels_found = list(wheels.glob('*.whl')) if wheels.is_dir() else []
+    if not wheels_found:
+        raise SystemExit(f'agent wheels missing: {wheels} (run scripts/fetch-agent-wheels.py)')
+    # The sidecar runtime already ships tested versions of the shared deps
+    # (starlette/uvicorn/sse-starlette/anyio/httpx...). Extracting the agent's
+    # older pins over them would silently downgrade H5a at runtime, so keep the
+    # sidecar copy and only add agent-only packages.
+    def dist_name(path: Path) -> str:
+        return path.name.split('-')[0].lower().replace('_', '-')
+    sidecar_names = {dist_name(p) for p in (VENDOR / 'wheels-win').glob('*.whl')}
+    installed, skipped = [], []
+    for wheel in sorted(wheels_found):
+        if dist_name(wheel) in sidecar_names:
+            skipped.append(wheel.name)
+            continue
+        with zipfile.ZipFile(wheel) as archive:
+            archive.extractall(site)
+        installed.append(wheel.name)
+    # pywin32's wheel expects a postinstall step to generate this bootstrap;
+    # without it the .pth line fails and win32 DLLs are not found. Write a
+    # minimal equivalent so mcp.server.stdio can import win32api on Windows.
+    bootstrap = site / 'pywin32_bootstrap.py'
+    if not bootstrap.exists() and any(name.startswith('pywin32-') for name in installed):
+        bootstrap.write_text(
+            'import os, sys\n'
+            'base = os.path.dirname(os.path.abspath(sys.executable))\n'
+            'for name in ("pywin32_system32", os.path.join("Lib", "site-packages", "pywin32_system32")):\n'
+            '    path = os.path.join(base, name)\n'
+            '    if os.path.isdir(path):\n'
+            '        os.add_dll_directory(path)\n'
+            '        os.environ["PATH"] = path + os.pathsep + os.environ.get("PATH", "")\n',
+            encoding='utf-8')
+    print(f'[agent] wheels installed={len(installed)} skipped(shared with sidecar)={len(skipped)}')
+    return agent_dst
+
+
 def install_python(backend: Path) -> Path:
     runtime = backend / 'runtime' / 'python'
     runtime.mkdir(parents=True, exist_ok=True)
@@ -155,6 +235,11 @@ def static_checks(backend: Path, runtime: Path) -> dict:
         runtime / 'Lib' / 'site-packages' / 'jsonschema' / '__init__.py',
         runtime / 'Lib' / 'site-packages' / 'rpds' / '__init__.py',
         runtime / 'Lib' / 'site-packages' / 'websockets' / '__init__.py',
+        runtime / 'Lib' / 'site-packages' / 'npc_mcp' / '__init__.py',
+        runtime / 'Lib' / 'site-packages' / 'npc_harness' / '__init__.py',
+        runtime / 'Lib' / 'site-packages' / 'mcp' / '__init__.py',
+        OUT / 'resources' / 'app.asar.unpacked' / 'agent' / 'mcp' / 'launch.py',
+        OUT / 'resources' / 'app.asar.unpacked' / 'agent' / 'skill' / 'agentroom' / 'SKILL.md',
     ]
     missing = [str(path) for path in required if not path.exists()]
     if missing:
@@ -178,7 +263,7 @@ def static_checks(backend: Path, runtime: Path) -> dict:
         if not path.is_file() or path.suffix not in {'.py', '.js', '.json', '.html', '.css', '.txt', '.md'}:
             continue
         text = path.read_text('utf-8', errors='ignore')
-        if '<home>' in text or 'C:\\Users' in text:
+        if re.search(r'/home/[^/\s\"\']+/', text) or re.search(r'[A-Za-z]:\\Users\\', text):
             leaks.append(('absolute-user-path', str(path)))
     if leaks:
         raise SystemExit(f'forbidden content: {leaks[:5]}')
@@ -203,6 +288,8 @@ def main() -> int:
     asar_path = build_asar()
     backend = install_backend()
     runtime = install_python(backend)
+    install_agent(backend, runtime)
+    prune_runtime()
     checks = static_checks(backend, runtime)
 
     files = []

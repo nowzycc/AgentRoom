@@ -1,8 +1,9 @@
-# AgentRoom · 私用预览 v0.1.0（Electron E1）
+# AgentRoom v0.1.0（Electron E1）
 
-这是把「真实 NPC 场景 + H5a 本机服务 + 冻结 R4 传输」装进桌面窗口的第一版预览。
-本目录源码按仓库根 `LICENSE`（MIT）发布；打包产物中不含任何第三方 3D 模型/动捕/贴图，
-资产的分发限制见仓库根 `ASSETS.md`。
+这是把「真实 NPC 场景 + H5a 本机服务 + 冻结 R4 传输」装进桌面窗口的第一版。
+
+代码以仓库根目录 `LICENSE`（MIT）开源；3D 资产不随仓库分发，许可与放置路径见 `ASSETS.md`。
+自行构建出的安装包中若包含第三方资产，分发时须遵守各自条款。
 
 ## 它是什么 / 不是什么
 - 是：桌面窗口里运行的既有真实 NPC 场景（未改动场景与 runtime）；显式按钮发命令
@@ -18,9 +19,29 @@
 4. 窗口出现即表示本机 sidecar 已就绪（每次启动都是全新会话；关闭窗口即清理）。
 5. 需要 Windows 10/11 x64（Electron 45 不支持更早系统）。
 
-> 包 SHA256：`d1f43fe2baa3a41c02925a8e1c55e4b2ff962f91a2f8228e4e6b58813f1c1340`（含中文 Windows 编码修复）
+> 包 SHA256：`93986f136afb9fcf2218f7d9f28abb4c74c734181a469303946ea1438143cf40`（含 MCP + Skill 接入）
 > 状态：Windows 包**已组装并通过静态校验**（PE x64、资源齐全、内置 Python 3.11.9）。
 > Windows 原生启动仍为 NOT_RUN（构建机无 Windows 实机），由你实机验证。
+
+## 接入 agent（v1：MCP + Skill）
+
+首次启动会弹出四屏向导（自检 → 选择 agent → 写入配置/安装 Skill → 连通测试）。
+之后可从菜单 **AgentRoom → 接入设置…** 重开。
+
+支持两个宿主，均为**同机**接入：
+
+| 宿主 | 配置写入点 | Skill 安装点 |
+|---|---|---|
+| Hermes | `<HERMES_HOME>/config.yaml` 的 `mcp_servers.agentroom` | `<HERMES_HOME>/skills/agentroom` |
+| DeepSeek Harness | `<DSH_HOME>/profiles/<profile>/cordis.patch.yml` | `<DSH_HOME>/skills/agentroom` |
+
+- 桌面版每次启动随机端口与 token，写入
+  `%LOCALAPPDATA%\AgentRoom\connection.json`（退出即删）；MCP 启动器读它完成鉴权。
+- MCP server 名为 `agentroom`，7 个工具：`npc_capabilities`、`npc_snapshot`、
+  `npc_publish_observations`、`npc_request_action`、`npc_request_goal`、
+  `npc_query_receipt`、`npc_cancel`。
+- **本版没有自动观察**：agent 不会收到房间事件推送；`npc_publish_observations` 只是显式上报。
+- **跨机接入（Hermes 在另一台 Linux）尚未支持**，向导会明确标为不可用。
 
 ## 使用
 - 右上「状态 / 命令」面板可折叠。

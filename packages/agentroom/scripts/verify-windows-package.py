@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import struct
 import tempfile
 import time
@@ -12,7 +13,7 @@ import subprocess
 import socket
 from pathlib import Path
 
-PKG = Path('<repo>/packages/agentroom')
+PKG = Path(os.environ.get('AGENTROOM_PKG') or Path(__file__).resolve().parents[1])
 ZIP = PKG / 'dist/releases/AgentRoom-win32-x64-0.1.0.zip'
 FROZEN = '0ba29206942e2f8caf898f358788897dc8d6ac12959910c08e5b81e5b43ab619'
 TOP = 'AgentRoom-win32-x64/'
@@ -28,10 +29,17 @@ REQUIRED = [
     'resources/app.asar.unpacked/backend/runtime/python/python.exe',
     'resources/app.asar.unpacked/backend/runtime/python/python311.dll',
     'resources/app.asar.unpacked/backend/runtime/python/python311._pth',
+    'resources/app.asar.unpacked/agent/mcp/launch.py',
+    'resources/app.asar.unpacked/agent/skill/agentroom/SKILL.md',
+    'resources/app.asar.unpacked/agent/node_modules/yaml/package.json',
+    'resources/app.asar.unpacked/backend/runtime/python/Lib/site-packages/mcp/__init__.py',
+    'resources/app.asar.unpacked/backend/runtime/python/Lib/site-packages/npc_mcp/__init__.py',
+    'resources/app.asar.unpacked/backend/runtime/python/Lib/site-packages/npc_harness/__init__.py',
 ]
 MODULES = ['anyio', 'starlette', 'uvicorn', 'jsonschema', 'referencing', 'dotenv',
            'sse_starlette', 'websockets', 'rpds', 'attrs', 'idna', 'click', 'h11',
-           'typing_extensions']
+           'typing_extensions', 'mcp', 'pydantic', 'pydantic_core', 'httpx2',
+           'jwt', 'opentelemetry', 'npc_mcp', 'npc_harness']
 
 
 def sha256_bytes(data: bytes) -> str:

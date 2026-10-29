@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- 纯静态：无任何外部资源、无内联脚本；不需要网络（default-src 'none'） -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'">
+<title>AgentRoom 接入设置</title>
+<link rel="stylesheet" href="onboarding.css">
+</head>
+<body>
+<header id="steps">
+  <span class="step active" data-step="1">1 自检</span>
+  <span class="step" data-step="2">2 选择 Agent</span>
+  <span class="step" data-step="3">3 配置安装</span>
+  <span class="step" data-step="4">4 连通测试</span>
+</header>
+
+<main>
+  <!-- 第一屏：自检（三灯） -->
+  <section id="screen-1" class="screen active">
+    <h1>环境自检</h1>
+    <p class="fine">三项就绪后，Agent 才能连上本次运行的 AgentRoom。</p>
+    <div class="lamp-row" id="lamp-python"><span class="dot"></span><div><b>Python</b><span class="path">检测中…</span></div></div>
+    <div class="lamp-row" id="lamp-launch"><span class="dot"></span><div><b>MCP 启动器 launch.py</b><span class="path">检测中…</span></div></div>
+    <div class="lamp-row" id="lamp-connection"><span class="dot"></span><div><b>connection.json</b><span class="path">检测中…</span></div></div>
+    <p class="fine">connection.json 由桌面壳启动时写入；若此灯不亮，先启动 AgentRoom 桌面版再回到本向导。</p>
+    <div class="detected">
+      <div class="lamp-row" id="det-hermes"><span class="dot"></span><div><b>Hermes</b><span class="path">检测中…</span></div></div>
+      <div class="lamp-row" id="det-dsh"><span class="dot"></span><div><b>DeepSeek Harness (DSH)</b><span class="path">检测中…</span></div></div>
+    </div>
+    <button id="btn-recheck" type="button">重新检测</button>
+  </section>
+
+  <!-- 第二屏：选择 agent（卡片可多选，未检测到灰显） -->
+  <section id="screen-2" class="screen">
+    <h1>要接入哪些 Agent？</h1>
+    <p class="fine">可多选；未在本机检测到的选项为灰显。</p>
+    <div class="cards">
+      <label class="card" id="card-hermes">
+        <input type="checkbox" id="sel-hermes" value="hermes">
+        <div>
+          <b>Hermes</b>
+          <span class="path" id="card-hermes-path">—</span>
+        </div>
+      </label>
+      <label class="card" id="card-dsh">
+        <input type="checkbox" id="sel-dsh" value="dsh">
+        <div>
+          <b>DeepSeek Harness (DSH)</b>
+          <span class="path" id="card-dsh-path">—</span>
+          <span class="profile-line">profile:
+            <select id="sel-profile" disabled><option>default</option></select>
+          </span>
+        </div>
+      </label>
+    </div>
+    <p id="pick-hint" class="warn">至少选择一个可用的 Agent 才能继续。</p>
+  </section>
+
+  <!-- 第三屏：配置（路径展示 + 写入/安装 + 结果） -->
+  <section id="screen-3" class="screen">
+    <h1>写入配置与安装 Skill</h1>
+    <p class="fine">写入前自动备份；写完会重新解析校验。幂等：重复点击安全。</p>
+    <div class="paths">
+      <div><b>Hermes 配置</b><span class="path" id="path-hermes">—</span></div>
+      <div><b>DSH patch</b><span class="path" id="path-dsh">—</span></div>
+      <div><b>Python</b><span class="path" id="path-python">—</span></div>
+      <div><b>launch.py</b><span class="path" id="path-launch">—</span></div>
+      <div><b>connection.json</b><span class="path" id="path-connection">—</span></div>
+    </div>
+    <div class="actions">
+      <button id="btn-write" type="button">写入配置</button>
+      <button id="btn-skill" type="button">安装 Skill</button>
+    </div>
+    <pre id="install-result" class="result" hidden></pre>
+  </section>
+
+  <!-- 第四屏：连通测试 -->
+  <section id="screen-4" class="screen">
+    <h1>连通测试</h1>
+    <p class="fine">直接启动 MCP 启动器，执行 initialize → tools/list，断言 7 个工具。</p>
+    <button id="btn-test" type="button">运行测试</button>
+    <p id="test-verdict" class="verdict" hidden></p>
+    <ul id="tool-list" class="tools">
+      <li data-tool="npc_capabilities">npc_capabilities</li>
+      <li data-tool="npc_snapshot">npc_snapshot</li>
+      <li data-tool="npc_publish_observations">npc_publish_observations</li>
+      <li data-tool="npc_request_action">npc_request_action</li>
+      <li data-tool="npc_request_goal">npc_request_goal</li>
+      <li data-tool="npc_query_receipt">npc_query_receipt</li>
+      <li data-tool="npc_cancel">npc_cancel</li>
+    </ul>
+    <pre id="test-detail" class="result" hidden></pre>
+  </section>
+</main>
+
+<footer>
+  <button id="btn-prev" type="button" disabled>上一步</button>
+  <span id="footer-msg"></span>
+  <button id="btn-next" type="button">下一步</button>
+</footer>
+
+<script src="onboarding.js"></script>
+</body>
+</html>

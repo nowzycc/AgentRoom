@@ -1,4 +1,4 @@
-# KNOWN-LIMITATIONS — v0.1.0 预览
+# KNOWN-LIMITATIONS — v0.1.0 私用预览
 
 ## 平台
 - **Windows 实测发现并已修**：中文 Windows 默认 GBK，冻结 H5a 用 `read_text()` 读 UTF-8 schema/policy

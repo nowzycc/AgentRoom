@@ -1,0 +1,52 @@
+# AgentRoom agent(MCP) Windows 运行时依赖（W1）
+# 目标平台：Windows x86_64 + CPython 3.11（桌面版内嵌 python.exe）
+# 版本唯一来源：packages/npc-mcp/uv.lock（对 win32 / python 3.11 求值 marker 后的完整运行时闭包）
+# npc-harness / npc-mcp 不在本清单下载范围：二者以源码随包分发
+# （build-windows.py 直接复制 src/npc_harness、src/npc_mcp 到 site-packages）。
+#
+# 说明：pydantic-settings 与 sniffio 不在 uv.lock 闭包中（mcp 2.3.0 及
+# npc-harness 均未依赖），故不列出；fetch-agent-wheels.py 以本文件为下载清单，
+# 逐行核对版本。
+
+# --- 一级依赖（npc-mcp / npc-harness pyproject 声明）---
+mcp==2.3.0
+httpx==0.28.1
+httpx-sse==0.4.0
+jsonschema==4.26.0
+python-dotenv==1.2.2
+npc-harness==0.1.0  # 本地路径 packages/npc-harness，源码随包分发，不下载 wheel
+
+# --- mcp==2.3.0 依赖 ---
+anyio==4.15.1
+httpx2==2.16.0
+mcp-types==2.3.0
+opentelemetry-api==1.45.1
+pydantic==2.14.1
+pyjwt==2.15.1
+python-multipart==0.0.32
+pywin32==312 ; sys_platform == "win32"
+sse-starlette==3.4.8
+starlette==1.3.1
+typing-extensions==4.16.0
+typing-inspection==0.4.4
+uvicorn==0.41.0
+
+# --- 传递依赖（闭包补全）---
+annotated-types==0.8.0        # pydantic
+attrs==26.1.0                 # jsonschema / referencing
+certifi==2026.10.23           # httpx / httpcore
+cffi==2.1.1                   # cryptography（非 PyPy）
+click==8.5.0                  # uvicorn
+colorama==0.4.6               # click（Windows）
+cryptography==50.0.2          # pyjwt[crypto]
+h11==0.16.0                   # httpcore / httpcore2 / uvicorn
+httpcore==1.0.9               # httpx
+httpcore2==2.16.0             # httpx2
+idna==3.20                    # anyio / httpx / httpx2
+jsonschema-specifications==2025.9.1  # jsonschema
+exceptiongroup==1.3.1         # anyio 的 py<3.11 backport；pip 在 3.10 下载端解析 marker 时带入，win/py3.11 运行时不加载，随目录保留
+pycparser==3.12               # cffi
+pydantic-core==2.50.1         # pydantic
+referencing==0.37.0           # jsonschema / jsonschema-specifications
+rpds-py==2026.9.1             # jsonschema / referencing
+truststore==0.10.5            # httpx2 / httpcore2

@@ -12,12 +12,13 @@
  *  - POST 网络错误：不自动重发/不换 ID，保留原 commandId 标记 unknown，允许凭原 ID 查询。
  *  - 所有失败路径（fatal/正常退出）都先停自己的 sidecar 再退出。
  * 不是新 executor；不实现任何领域逻辑。 */
-const { app, BrowserWindow, ipcMain, session, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, session, dialog, Menu } = require('electron');
 const path = require('node:path');
 const fs = require('node:fs');
 const crypto = require('node:crypto');
 const net = require('node:net');
-const { spawn } = require('node:child_process');
+const { spawn, spawnSync } = require('node:child_process');
+const os = require('node:os');
 
 const ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
 const WORLD_ID = 'apartment-v3';
@@ -44,6 +45,44 @@ const backendRoot = isPackaged
   ? path.join(process.resourcesPath, 'app.asar.unpacked', 'backend')
   : path.join(app.getAppPath(), 'backend');
 const h5aDir = path.join(backendRoot, 'room', 'tools', 'npc-v2', 'hardening', 'H5a');
+
+// 连接发现：agent 的 MCP 启动器读取此文件拿到本次 boot 的 origin/token。
+// token 只写入用户状态目录，不写日志、不进渲染进程。
+function connectionFilePath() {
+  if (process.platform === 'win32') {
+    const base = process.env.LOCALAPPDATA || path.join(os.homedir(), 'AppData', 'Local');
+    return path.join(base, 'AgentRoom', 'connection.json');
+  }
+  const base = process.env.XDG_STATE_HOME || path.join(os.homedir(), '.local', 'state');
+  return path.join(base, 'agentroom', 'connection.json');
+}
+const CONNECTION_FILE = connectionFilePath();
+
+function writeConnectionFile() {
+  const payload = {
+    version: 1,
+    origin: ctx.origin,
+    harnessToken: ctx.harnessToken,
+    runtimeId: ctx.runtimeId,
+    worldId: WORLD_ID,
+    actorId: ACTOR_ID,
+    pid: process.pid,
+    startedAt: new Date().toISOString()
+  };
+  fs.mkdirSync(path.dirname(CONNECTION_FILE), { recursive: true, mode: 0o700 });
+  fs.writeFileSync(CONNECTION_FILE, JSON.stringify(payload, null, 2), { mode: 0o600 });
+  if (process.platform === 'win32') {
+    try {
+      const user = process.env.USERNAME;
+      if (user) spawnSync('icacls', [CONNECTION_FILE, '/inheritance:r', '/grant:r', user + ':F'],
+                          { windowsHide: true, stdio: 'ignore' });
+    } catch { /* 权限收紧失败不阻断，文件仍在用户目录 */ }
+  }
+}
+
+function removeConnectionFile() {
+  try { fs.unlinkSync(CONNECTION_FILE); } catch { /* 已删除或从未创建 */ }
+}
 const entryScript = path.join(h5aDir, 'run-desktop.py');
 
 function sidecarPython() {
@@ -321,6 +360,7 @@ async function fatalExit(message) {
 }
 
 async function stopSidecar() {
+  removeConnectionFile();
   const proc = sidecar;
   sidecar = null;
   if (!proc || proc.exitCode !== null) return;
@@ -334,11 +374,43 @@ async function stopSidecar() {
   });
 }
 
+let onboarding = null;
+
+function installMenu() {
+  const template = [
+    {
+      label: 'AgentRoom',
+      submenu: [
+        { label: '接入设置…', accelerator: 'CmdOrCtrl+,', click: () => { if (onboarding) onboarding.show(); } },
+        { type: 'separator' },
+        { role: 'quit', label: '退出' }
+      ]
+    },
+    {
+      label: '视图',
+      submenu: [{ role: 'reload' }, { role: 'toggleDevTools' }, { type: 'separator' }, { role: 'resetZoom' }, { role: 'zoomIn' }, { role: 'zoomOut' }]
+    }
+  ];
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+}
+
 async function boot() {
   registerIpc();
   await startSidecar();
   await waitReady(30000);
+  writeConnectionFile();
   await createWindow();
+  onboarding = require('./onboarding.js').registerOnboarding({
+    ipcMain,
+    app,
+    shell: { get win() { return win; } },
+    paths: {
+      agentRoot: path.dirname(backendRoot), // 开发=包目录；打包=app.asar.unpacked
+      pythonPath: sidecarPython(),
+      connectionFile: CONNECTION_FILE
+    }
+  });
+  installMenu();
 }
 
 const gotLock = app.requestSingleInstanceLock();
