@@ -66,6 +66,8 @@ def run_launch(args: list[str], extra_env: dict | None = None):
         [sys.executable, str(LAUNCH), *args],
         capture_output=True,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         env=base_env(extra_env),
         timeout=60,
     )
