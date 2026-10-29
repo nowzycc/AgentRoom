@@ -24,6 +24,15 @@ from urllib.parse import urlsplit
 EXIT_OK = 0
 EXIT_CONFIG_ERROR = 2
 
+# Windows consoles default to a legacy code page; Chinese diagnostics would be
+# escaped as \uXXXX and break MCP hosts that match on the message text.
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="backslashreplace")  # type: ignore[attr-defined]
+        except OSError:
+            pass
+
 
 def _prepare_windows_dlls() -> None:
     """pywin32 wheels need their DLL dir registered when no postinstall ran.

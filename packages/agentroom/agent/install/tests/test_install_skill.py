@@ -146,7 +146,10 @@ def test_symlink_in_source_is_preserved_not_followed(home, tmp_path):
     outside = tmp_path / "outside.txt"
     outside.write_text("linked", encoding="utf-8")
     link = SKILL_SOURCE / "link-probe.txt"
-    link.symlink_to(outside)
+    try:
+        link.symlink_to(outside)
+    except (OSError, NotImplementedError):
+        pytest.skip("symlinks are not permitted on this platform")
     try:
         result = run_installer(["--agent", "hermes"], home)
         assert result.returncode == 0, result.stderr

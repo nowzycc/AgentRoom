@@ -31,11 +31,21 @@ SOURCE = Path(__file__).resolve().parent.parent / "skill" / "agentroom"
 SKILL_NAME = "agentroom"
 
 
+def user_home() -> Path:
+    """Honor HOME/USERPROFILE explicitly.
+
+    Path.home() on Windows resolves USERPROFILE directly and ignores HOME,
+    which makes tests (and sandboxed launches) write into the real profile.
+    """
+    env = os.environ.get("HOME") or os.environ.get("USERPROFILE")
+    return Path(env) if env else Path.home()
+
+
 def default_root(agent: str) -> Path:
     if agent == "hermes":
-        return Path.home() / ".hermes"
+        return user_home() / ".hermes"
     env = os.environ.get("DSH_HOME", "").strip()
-    return Path(env).expanduser() if env else Path.home() / ".dsh"
+    return Path(env).expanduser() if env else user_home() / ".dsh"
 
 
 def utc_stamp() -> str:
@@ -63,7 +73,14 @@ def copy_tree(src: Path, dst: Path) -> int:
     for item in sorted(src.rglob("*")):
         dest = dst / item.relative_to(src)
         if item.is_symlink():
-            dest.symlink_to(os.readlink(item))
+            try:
+                dest.symlink_to(os.readlink(item))
+            except OSError:
+                # Windows without symlink privilege: fall back to a regular copy.
+                target = item.resolve()
+                if target.is_file():
+                    shutil.copyfile(target, dest)
+                    files += 1
         elif item.is_dir():
             dest.mkdir(parents=True, exist_ok=True)
         else:

@@ -261,6 +261,7 @@ class DefaultPathTests(unittest.TestCase):
         cls.launch = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(cls.launch)
 
+    @unittest.skipIf(os.name == "nt", "XDG paths are POSIX-only")
     def test_xdg_state_home(self):
         with tempfile.TemporaryDirectory() as tmp, self._patched_env(XDG_STATE_HOME=tmp):
             self.assertEqual(
@@ -268,6 +269,7 @@ class DefaultPathTests(unittest.TestCase):
                 Path(tmp) / "agentroom" / "connection.json",
             )
 
+    @unittest.skipIf(os.name == "nt", "XDG paths are POSIX-only")
     def test_xdg_fallback_to_home(self):
         with self._patched_env(XDG_STATE_HOME=""):
             self.assertEqual(
