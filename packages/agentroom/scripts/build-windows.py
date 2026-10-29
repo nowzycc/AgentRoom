@@ -120,12 +120,13 @@ def install_backend() -> Path:
 # Trim runtime pieces this product never loads. dxcompiler/vk_swiftshader serve
 # WebGPU/Vulkan fallback (we render WebGL2 through ANGLE/D3D11); pythonwin and
 # win32comext are pywin32 GUI/COM extras the MCP server never imports.
+_RUNTIME = Path('resources/app.asar.unpacked/backend/runtime/python')
 PRUNE = [
     'dxcompiler.dll',
     'vk_swiftshader.dll',
     'vk_swiftshader_icd.json',
-    'Lib/site-packages/pythonwin',
-    'Lib/site-packages/win32comext',
+    _RUNTIME / 'Lib/site-packages/pythonwin',
+    _RUNTIME / 'Lib/site-packages/win32comext',
 ]
 
 
