@@ -155,6 +155,7 @@ def test_symlink_in_source_is_preserved_not_followed(home, tmp_path):
         assert result.returncode == 0, result.stderr
         target_link = home / ".hermes" / "skills" / "agentroom" / "link-probe.txt"
         assert target_link.is_symlink()
-        assert os.readlink(target_link) == str(outside)
+        # Windows returns an extended-length (\\?\C:\...) link target.
+        assert Path(os.readlink(target_link)).resolve() == outside.resolve()
     finally:
         link.unlink()
