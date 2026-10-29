@@ -8,7 +8,7 @@ const os = require('node:os');
 const path = require('node:path');
 const YAML = require('yaml');
 const { writeHermesConfig } = require('../../agent/config/hermes.js');
-const { writeDshConfig, detectDsh } = require('../../agent/config/dsh.js');
+const { writeDshConfig, detectDsh, flattenEntries } = require('../../agent/config/dsh.js');
 
 const PY = '/tmp/fake-python/bin/python';
 const LAUNCH = '/opt/agentroom/agent/mcp/launch.py';
@@ -139,10 +139,12 @@ try {
     assert.ok(r.backup && fs.existsSync(r.backup));
     assert.equal(read(r.backup), dshOriginal);
     const list = YAML.parse(read(patchPath));
+    // 原有 1 个 patch 项 + 我们的 1 个 insert patch 项
     assert.equal(list.length, 2);
-    assert.equal(list[0].id, 'mcp-filesystem');
-    assert.equal(list[1].id, 'mcp-agentroom');
-    assert.deepEqual(list[1], {
+    const flat = flattenEntries(list);
+    assert.equal(flat[0].id, 'mcp-filesystem');
+    assert.equal(flat[1].id, 'mcp-agentroom');
+    assert.deepEqual(flat[1], {
       id: 'mcp-agentroom', name: '@deepseek-ai/dsh-mcp-client',
       config: { serverName: 'agentroom', transport: 'stdio', command: PY, args: [LAUNCH],
                 env: { AGENTROOM_CONNECTION_FILE: CONN } }
@@ -154,10 +156,11 @@ try {
     const r = writeDshConfig({ dshHome, profile, pythonPath: PY + 'x', launchPath: LAUNCH, connectionFile: CONN });
     assert.equal(r.action, 'replaced');
     const list = YAML.parse(read(patchPath));
-    assert.equal(list.length, 2, '总条目数不变');
-    assert.equal(list.filter((it) => it.id === 'mcp-agentroom').length, 1, '恰好一个 mcp-agentroom');
-    assert.equal(list[0].id, 'mcp-filesystem');
-    assert.equal(list.find((it) => it.id === 'mcp-agentroom').config.command, PY + 'x');
+    assert.equal(list.length, 2, 'patch 项数不变');
+    const flat = flattenEntries(list);
+    assert.equal(flat.filter((it) => it.id === 'mcp-agentroom').length, 1, '恰好一个生效条目');
+    assert.equal(flat[0].id, 'mcp-filesystem');
+    assert.equal(flat.find((it) => it.id === 'mcp-agentroom').config.command, PY + 'x');
   });
 
   testCase('幂等：同参数重写 changed=false', () => {
@@ -182,8 +185,9 @@ try {
     const r = writeDshConfig({ dshHome, profile, pythonPath: PY, launchPath: LAUNCH, connectionFile: CONN });
     assert.equal(r.action, 'replaced');
     const list = YAML.parse(read(patchPath));
-    assert.equal(list.length, 1);
-    assert.equal(list[0].config.command, PY);
+    const flat = flattenEntries(list);
+    assert.equal(flat.length, 1);
+    assert.equal(flat[0].config.command, PY);
   });
 
   testCase('新建：patch 文件与目录都不存在时创建', () => {
@@ -192,7 +196,8 @@ try {
     assert.equal(r.action, 'created');
     const list = YAML.parse(read(path.join(freshDsh, 'profiles', 'work', 'cordis.patch.yml')));
     assert.equal(list.length, 1);
-    assert.equal(list[0].id, 'mcp-agentroom');
+    assert.ok(Array.isArray(list[0].insert), '新增插件必须用 insert patch');
+    assert.equal(flattenEntries(list)[0].id, 'mcp-agentroom');
   });
 
   testCase('非法输入：profile 路径穿越/斜杠/相对路径 python 报错', () => {

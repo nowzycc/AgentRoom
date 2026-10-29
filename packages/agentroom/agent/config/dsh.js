@@ -1,8 +1,16 @@
 'use strict';
 /* W3 Onboarding — DSH `profiles/<profile>/cordis.patch.yml` 写入器。
- * 契约 CONTRACT-AGENT-V1「Onboarding」节：幂等、先备份、写后重新解析校验。
- * 已存在 `id: mcp-agentroom` 条目则整体替换该项（多余重复项去重），否则追加到列表末尾；
- * 文件不存在则新建（顶层为补丁条目列表）。其余条目/注释尽量原样保留。
+ *
+ * DSH 的 patch 层不是「往条目列表末尾追加一个条目」：patch 项默认按 `id`
+ * 定位已存在的条目做覆盖；要新增插件必须在 patch 项里用 `insert: [...]`
+ * （见 @deepseek-ai/dsh-app-boot 的 applyEntryPatches）。写成
+ * `- id: mcp-agentroom` 只会得到 "patch: entry not found" 并被静默跳过。
+ *
+ * 本写入器保证：
+ * - 幂等：重复执行只有一份生效的 mcp-agentroom；
+ * - 兼容旧错误形状：顶层 `- id: mcp-agentroom` 会被清掉；
+ * - 保留其余 patch 项与注释；
+ * - 写前备份、写后重新解析校验。
  * 不记录 token（只写 connection.json 的路径）。 */
 const fs = require('node:fs');
 const path = require('node:path');
@@ -45,6 +53,20 @@ function expectedEntry(pythonPath, launchPath, connectionFile) {
   };
 }
 
+/** 把 patch 列表展开成真正会生效的条目（insert 展开，其余项自身）。 */
+function flattenEntries(patches) {
+  const out = [];
+  for (const item of patches) {
+    if (item && typeof item === 'object' && Array.isArray(item.insert)) out.push(...item.insert);
+    else if (item && typeof item === 'object') out.push(item);
+  }
+  return out;
+}
+
+function findOurEntries(patches) {
+  return flattenEntries(patches).filter((it) => it && typeof it === 'object' && it.id === ENTRY_ID);
+}
+
 /**
  * DSH 安装探测：`profiles/` 是否存在 + 可用 profile 列表（其下的子目录）。
  * @returns {{home:string, profilesDir:string, present:boolean, profiles:string[]}}
@@ -66,6 +88,49 @@ function detectDsh(dshHome) {
     }
   } catch { /* 不存在 → present=false */ }
   return { home, profilesDir, present, profiles };
+}
+
+function isMap(node) {
+  return !!node && node.constructor && node.constructor.name === 'YAMLMap';
+}
+
+/** 在 doc 中就地替换/清理我们的条目；返回是否找到了旧条目。 */
+function spliceOurEntry(doc, entry) {
+  let found = false;
+  const items = doc.contents.items;
+  for (let i = items.length - 1; i >= 0; i--) {
+    const item = items[i];
+    if (!isMap(item)) continue;
+
+    // 旧错误形状：顶层 `- id: mcp-agentroom ...`，DSH 会当作无效 patch 跳过。
+    // 原地改写成 insert patch，既纠正形状又不丢位置。
+    if (item.get('id') === ENTRY_ID) {
+      if (found) {
+        doc.delete(i);
+      } else {
+        items[i] = doc.createNode({ insert: [entry] });
+        found = true;
+      }
+      continue;
+    }
+
+    const insert = item.get('insert');
+    if (!insert || !Array.isArray(insert.items)) continue;
+
+    // 在 insert 数组里找我们的条目：首个替换，其余删除。
+    for (let j = insert.items.length - 1; j >= 0; j--) {
+      const child = insert.items[j];
+      if (!isMap(child) || child.get('id') !== ENTRY_ID) continue;
+      if (found) {
+        insert.items.splice(j, 1);
+      } else {
+        insert.items[j] = doc.createNode(entry);
+        found = true;
+      }
+    }
+    if (insert.items.length === 0) doc.delete(i);
+  }
+  return found;
 }
 
 /**
@@ -99,21 +164,18 @@ function writeDshConfig({ dshHome, profile, pythonPath, launchPath, connectionFi
     if (!doc.contents || doc.contents.constructor.name !== 'YAMLSeq') {
       fail('现有 cordis.patch.yml 顶层必须是列表');
     }
-    const matches = [];
-    doc.contents.items.forEach((item, idx) => {
-      const isMap = item && item.constructor && item.constructor.name === 'YAMLMap';
-      if (isMap && item.get('id') === ENTRY_ID) matches.push(idx);
-    });
-    if (matches.length > 0) {
+    if (spliceOurEntry(doc, entry)) {
       action = 'replaced';
-      doc.set(matches[0], entry);           // 首个匹配整体替换
-      for (let i = matches.length - 1; i >= 1; i--) doc.delete(matches[i]); // 重复项去重
     } else {
       action = 'appended';
-      doc.add(entry);
+      doc.add({ insert: [entry] });
+    }
+    // 兜底：任何编辑路径都必须留下恰好一份生效条目。
+    if (findOurEntries(YAML.parse(doc.toString())).length === 0) {
+      doc.add({ insert: [entry] });
     }
   } else {
-    doc = new YAML.Document([entry]);
+    doc = new YAML.Document([{ insert: [entry] }]);
     action = 'created';
   }
 
@@ -132,15 +194,15 @@ function writeDshConfig({ dshHome, profile, pythonPath, launchPath, connectionFi
   }
   fs.writeFileSync(configPath, next, { mode: 0o600 });
 
-  // 写后重解析校验：严格解析 + 恰好一个 mcp-agentroom 条目且与预期一致
+  // 写后重解析校验：严格解析 + 恰好一个生效的 mcp-agentroom 条目且与预期一致。
   const verify = YAML.parse(fs.readFileSync(configPath, 'utf8'));
   if (!Array.isArray(verify)) fail('写后重解析校验失败：顶层不是列表');
-  const ours = verify.filter((it) => it && typeof it === 'object' && it.id === ENTRY_ID);
-  if (ours.length !== 1) fail('写后重解析校验失败：mcp-agentroom 条目数=' + ours.length);
+  const ours = findOurEntries(verify);
+  if (ours.length !== 1) fail('写后重解析校验失败：生效的 mcp-agentroom 条目数=' + ours.length);
   if (JSON.stringify(canonical(ours[0])) !== JSON.stringify(canonical(entry))) {
     fail('写后重解析校验失败：mcp-agentroom 条目与预期不一致');
   }
   return { ok: true, configPath, changed: true, backup, action, entry, total: verify.length };
 }
 
-module.exports = { writeDshConfig, detectDsh, ENTRY_ID, expectedEntry };
+module.exports = { writeDshConfig, detectDsh, ENTRY_ID, expectedEntry, flattenEntries };
